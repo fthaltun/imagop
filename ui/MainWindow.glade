@@ -12,6 +12,14 @@
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
   </object>
+  <object class="GtkListStore" id="liststore">
+    <columns>
+      <!-- column-name GdkPixbuf1 -->
+      <column type="GdkPixbuf"/>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkWindow" id="ui_main_window">
     <property name="can-focus">False</property>
     <child>
@@ -83,6 +91,7 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Optimization is in progress.</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -106,6 +115,7 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Please wait ...</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -197,14 +207,6 @@
       </object>
     </child>
   </object>
-  <object class="GtkListStore" id="liststore">
-    <columns>
-      <!-- column-name GdkPixbuf1 -->
-      <column type="GdkPixbuf"/>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkFileFilter" id="ui_image_filefilter">
     <mime-types>
       <mime-type>image/png</mime-type>
@@ -216,6 +218,21 @@
     <property name="filter">ui_image_filefilter</property>
     <property name="select-multiple">True</property>
     <signal name="file-activated" handler="on_ui_filechooser_dialog_file_activated" swapped="no"/>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
     <child type="titlebar">
       <object class="GtkHeaderBar" id="ui_selectimage_headerbar">
         <property name="visible">True</property>

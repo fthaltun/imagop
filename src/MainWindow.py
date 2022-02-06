@@ -8,6 +8,7 @@ Created on Sat Feb  5 19:05:13 2022
 
 import locale
 import os
+import shutil
 import subprocess
 
 import gi
@@ -56,11 +57,8 @@ class MainWindow(object):
 
         self.output_dir = os.path.join(os.path.expanduser("~"), "image-optimizer-output")
         self.org_images = []
-
-        self.comp_pngquant = []
-
-        self.quantqueue = 0
-        self.zopqueue = 0
+        self.p_queue = 0
+        self.z_queue = 0
 
         self.main_window.show_all()
 
@@ -100,8 +98,8 @@ class MainWindow(object):
 
     def on_ui_optimize_button_clicked(self, button):
         if self.control_output_directory() and self.org_images:
-            self.quantqueue = len(self.org_images)
-            self.zopqueue = self.quantqueue
+            self.p_queue = len(self.org_images)
+            self.z_queue = self.p_queue
             self.main_stack.set_visible_child_name("splash")
             self.select_image.set_visible(False)
             for org_image in self.org_images:
@@ -111,7 +109,7 @@ class MainWindow(object):
                                                     os.path.basename(os.path.splitext(org_image)[0]) + "-pngquant.png"),
                            org_image]
 
-                self.startProcess(command)
+                self.start_p_process(command)
 
     def on_ui_open_output_button_clicked(self, button):
         try:
@@ -124,61 +122,80 @@ class MainWindow(object):
     def on_ui_optimize_new_button_clicked(self, button):
         self.main_stack.set_visible_child_name("select")
         self.select_image.set_visible(True)
-        self.quantqueue = 0
-        self.zopqueue = 0
+        self.z_queue = 0
+        self.p_queue = 0
         self.org_images = []
-        self.comp_pngquant = []
         self.liststore.clear()
 
-    def startProcess(self, params):
+    def start_p_process(self, params):
         pid, stdin, stdout, stderr = GLib.spawn_async(params, flags=GLib.SpawnFlags.DO_NOT_REAP_CHILD,
                                                       standard_output=True, standard_error=True)
-        GLib.io_add_watch(GLib.IOChannel(stdout), GLib.IO_IN | GLib.IO_HUP, self.onProcessStdout)
-        GLib.io_add_watch(GLib.IOChannel(stderr), GLib.IO_IN | GLib.IO_HUP, self.onProcessStderr)
-        GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid, self.onProcessExit)
+        GLib.io_add_watch(GLib.IOChannel(stdout), GLib.IO_IN | GLib.IO_HUP, self.on_p_process_stdout)
+        GLib.io_add_watch(GLib.IOChannel(stderr), GLib.IO_IN | GLib.IO_HUP, self.on_p_process_stderr)
+        GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid, self.on_p_process_exit)
 
         return pid
 
-    def onProcessStdout(self, source, condition):
+    def on_p_process_stdout(self, source, condition):
         if condition == GLib.IO_HUP:
             return False
-
         line = source.readline()
         print(line)
         return True
 
-    def onProcessStderr(self, source, condition):
+    def on_p_process_stderr(self, source, condition):
         if condition == GLib.IO_HUP:
             return False
-
         line = source.readline()
         print(line)
         return True
 
-    def onProcessExit(self, pid, status):
-        print(status)
-        end = False
-        self.quantqueue -= 1
-        if self.quantqueue <= 0:
+    def on_p_process_exit(self, pid, status):
+        self.p_queue -= 1
+        if self.p_queue <= 0:
+            print("pngquant processes done, starting zopflipng processes")
             for org_image in self.org_images:
                 pngquanted = os.path.join(self.output_dir,
                                           os.path.basename(os.path.splitext(org_image)[0]) + "-pngquant.png")
                 zopflipnged = os.path.join(self.output_dir,
                                            os.path.basename(os.path.splitext(org_image)[0]) + "-optimized.png")
-                if pngquanted not in self.comp_pngquant:
-                    command = ["/usr/bin/zopflipng", "-y", "--lossy_transparent", pngquanted, zopflipnged]
-                    self.comp_pngquant.append(pngquanted)
-                    self.startProcess(command)
-                    self.zopqueue -= 1
 
-                if self.zopqueue <= 0 and os.path.isfile(zopflipnged):
-                    if os.path.isfile(pngquanted):
-                        os.remove(pngquanted)
+                # if pngquanted file is bigger than org file then we use org file
+                if not os.path.isfile(pngquanted):
+                    shutil.copy2(org_image, pngquanted)
+                command = ["/usr/bin/zopflipng", "-y", "--lossy_transparent", pngquanted, zopflipnged]
+                self.start_z_process(command)
 
-                if os.path.isfile(zopflipnged):
-                    end = True
-                else:
-                    end = False
+    def start_z_process(self, params):
+        pid, stdin, stdout, stderr = GLib.spawn_async(params, flags=GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+                                                      standard_output=True, standard_error=True)
+        GLib.io_add_watch(GLib.IOChannel(stdout), GLib.IO_IN | GLib.IO_HUP, self.on_z_process_stdout)
+        GLib.io_add_watch(GLib.IOChannel(stderr), GLib.IO_IN | GLib.IO_HUP, self.on_z_process_stderr)
+        GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid, self.on_z_process_exit)
 
-            if end:
-                self.main_stack.set_visible_child_name("complete")
+        return pid
+
+    def on_z_process_stdout(self, source, condition):
+        if condition == GLib.IO_HUP:
+            return False
+        line = source.readline()
+        print(line)
+        return True
+
+    def on_z_process_stderr(self, source, condition):
+        if condition == GLib.IO_HUP:
+            return False
+        line = source.readline()
+        print(line)
+        return True
+
+    def on_z_process_exit(self, pid, status):
+        self.z_queue -= 1
+        if self.z_queue <= 0:
+            self.main_stack.set_visible_child_name("complete")
+
+            for org_image in self.org_images:
+                pngquanted = os.path.join(self.output_dir,
+                                          os.path.basename(os.path.splitext(org_image)[0]) + "-pngquant.png")
+                if os.path.isfile(pngquanted):
+                    os.remove(pngquanted)
