@@ -1,0 +1,19 @@
+Source: image-optimizer
+Section: graphics
+Priority: optional
+Maintainer: Fatih Altun <fatih.altun@pardus.org.tr>
+Build-Depends: debhelper (>= 10), dh-python, python3-all, python3-setuptools
+Standards-Version: 4.3.0
+Homepage: https://github.com/fthaltun/image-optimizer
+
+Package: image-optimizer
+Architecture: all
+Depends: ${misc:Depends},
+         ${python3:Depends},
+         gir1.2-glib-2.0,
+         gir1.2-gtk-3.0,
+         gir1.2-notify-0.7,
+         pngquant,
+         zopfli
+Description: Image Optimizer
+ Optimizes the sizes of images.
