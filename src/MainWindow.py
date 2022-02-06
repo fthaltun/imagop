@@ -7,6 +7,7 @@ Created on Sat Feb  5 19:05:13 2022
 """
 
 import locale
+from locale import gettext as _
 import os
 import shutil
 import subprocess
@@ -35,33 +36,44 @@ class MainWindow(object):
             print("Error reading GUI file: " + self.main_window_ui_filename)
             raise
 
+
+        self.define_components()
+
+        self.main_window.set_application(application)
+
         # Set version
         # If not getted from __version__ file then accept version in MainWindow.glade file
         try:
             version = open(os.path.dirname(os.path.abspath(__file__)) + "/__version__").readline()
-            self.aboutdialog.set_version(version)
+            self.about_dialog.set_version(version)
         except:
             pass
 
-        self.main_window = self.GtkBuilder.get_object("ui_main_window")
-        self.main_window.set_application(application)
-        self.filechooser_dialog = self.GtkBuilder.get_object("ui_filechooser_dialog")
-        self.filechooser_button = self.GtkBuilder.get_object("ui_filechooser_button")
-        self.iconview = self.GtkBuilder.get_object("ui_iconview")
-        self.liststore = self.GtkBuilder.get_object("liststore")
-        self.main_stack = self.GtkBuilder.get_object("ui_main_stack")
-        self.select_image = self.GtkBuilder.get_object("ui_selectimage")
-        self.done_info = self.GtkBuilder.get_object("ui_done_info")
+        self.about_dialog.set_program_name(_("Image Optimizer"))
 
         self.iconview.set_pixbuf_column(0)
         self.iconview.set_text_column(1)
-
         self.output_dir = os.path.join(os.path.expanduser("~"), "image-optimizer-output")
         self.org_images = []
         self.p_queue = 0
         self.z_queue = 0
 
         self.main_window.show_all()
+
+    def define_components(self):
+        self.main_window = self.GtkBuilder.get_object("ui_main_window")
+        self.about_dialog = self.GtkBuilder.get_object("ui_about_dialog")
+        self.filechooser_dialog = self.GtkBuilder.get_object("ui_filechooser_dialog")
+        self.filechooser_button = self.GtkBuilder.get_object("ui_filechooser_button")
+        self.iconview = self.GtkBuilder.get_object("ui_iconview")
+        self.liststore = self.GtkBuilder.get_object("ui_liststore")
+        self.main_stack = self.GtkBuilder.get_object("ui_main_stack")
+        self.select_image = self.GtkBuilder.get_object("ui_selectimage")
+        self.done_info = self.GtkBuilder.get_object("ui_done_info")
+
+    def on_ui_about_button_clicked(self, button):
+        self.about_dialog.run()
+        self.about_dialog.hide()
 
     def on_ui_selectimage_button_clicked(self, button):
         self.image_to_ui()
