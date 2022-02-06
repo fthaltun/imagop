@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Image Optimizer
+Name[tr]=Resim Optimize Edici
+Comment=Optimizes the sizes of images
+Comment[tr]=Resimlerin boyutlarını optimize eder
+Exec=image-optimizer
+Icon=image-x-generic-symbolic
+Terminal=false
+Type=Application
+Categories=GTK;Graphics;
+StartupNotify=true
