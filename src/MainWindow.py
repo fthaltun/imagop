@@ -51,6 +51,7 @@ class MainWindow(object):
         self.liststore = self.GtkBuilder.get_object("liststore")
         self.main_stack = self.GtkBuilder.get_object("ui_main_stack")
         self.select_image = self.GtkBuilder.get_object("ui_selectimage")
+        self.done_info = self.GtkBuilder.get_object("ui_done_info")
 
         self.iconview.set_pixbuf_column(0)
         self.iconview.set_text_column(1)
@@ -96,6 +97,16 @@ class MainWindow(object):
             return False
         return True
 
+    def get_size(self, filepath):
+        size = os.stat(filepath).st_size
+        if type(size) is int:
+            size = size / 1024
+            if size > 1024:
+                size = "{:.2f} MB".format(float(size / 1024))
+            else:
+                size = "{:.2f} KB".format(float(size))
+        return size
+
     def on_ui_optimize_button_clicked(self, button):
         if self.control_output_directory() and self.org_images:
             self.p_queue = len(self.org_images)
@@ -126,6 +137,8 @@ class MainWindow(object):
         self.p_queue = 0
         self.org_images = []
         self.liststore.clear()
+        start, end = self.done_info.get_buffer().get_bounds()
+        self.done_info.get_buffer().delete(start, end)
 
     def start_p_process(self, params):
         pid, stdin, stdout, stderr = GLib.spawn_async(params, flags=GLib.SpawnFlags.DO_NOT_REAP_CHILD,
@@ -195,6 +208,15 @@ class MainWindow(object):
             self.main_stack.set_visible_child_name("complete")
 
             for org_image in self.org_images:
+
+                optimized = os.path.join(self.output_dir,
+                                         os.path.basename(os.path.splitext(org_image)[0]) + "-optimized.png")
+
+                self.done_info.get_buffer().insert(self.done_info.get_buffer().get_end_iter(),
+                                                   "{} => old size: {} | new size: {}\n".format(
+                                                       os.path.basename(optimized), self.get_size(org_image),
+                                                       self.get_size(optimized)))
+
                 pngquanted = os.path.join(self.output_dir,
                                           os.path.basename(os.path.splitext(org_image)[0]) + "-pngquant.png")
                 if os.path.isfile(pngquanted):
