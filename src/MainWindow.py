@@ -129,7 +129,7 @@ class MainWindow(object):
             self.p_queue = len(self.org_images)
             self.z_queue = self.p_queue
             self.main_stack.set_visible_child_name("splash")
-            self.select_image.set_visible(False)
+            self.select_image.set_sensitive(False)
             for org_image in self.org_images:
                 command = ["/usr/bin/pngquant", "--quality=80-98", "--skip-if-larger", "--force", "--strip", "--speed",
                            "1",
@@ -149,7 +149,7 @@ class MainWindow(object):
 
     def on_ui_optimize_new_button_clicked(self, button):
         self.main_stack.set_visible_child_name("select")
-        self.select_image.set_visible(True)
+        self.select_image.set_sensitive(True)
         self.z_queue = 0
         self.p_queue = 0
         self.org_images = []
