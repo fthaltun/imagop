@@ -79,13 +79,15 @@ class MainWindow(object):
     def image_to_ui(self):
         for image in self.filechooser_dialog.get_filenames():
             name = "{}".format(image)
-            if name not in self.org_images:
-                try:
-                    icon = GdkPixbuf.Pixbuf.new_from_file_at_size(image, 100, 100)
-                    self.liststore.append([icon, os.path.basename(name)])
-                    self.org_images.append(name)
-                except gi.repository.GLib.Error:
-                    print("{} is not an image so skipped".format(name))
+            # currently only png is supported
+            if name.lower().endswith(".png"):
+                if name not in self.org_images:
+                    try:
+                        icon = GdkPixbuf.Pixbuf.new_from_file_at_size(image, 100, 100)
+                        self.liststore.append([icon, os.path.basename(name)])
+                        self.org_images.append(name)
+                    except gi.repository.GLib.Error:
+                        print("{} is not an image so skipped".format(name))
         self.filechooser_dialog.hide()
 
     def control_output_directory(self):
@@ -98,13 +100,16 @@ class MainWindow(object):
         return True
 
     def get_size(self, filepath):
-        size = os.stat(filepath).st_size
-        if type(size) is int:
-            size = size / 1024
-            if size > 1024:
-                size = "{:.2f} MB".format(float(size / 1024))
-            else:
-                size = "{:.2f} KB".format(float(size))
+        size = 0
+        if os.path.isfile(filepath):
+            size = os.stat(filepath).st_size
+            if type(size) is int:
+                size = size / 1024
+                if size > 1024:
+                    size = "{:.2f} MB".format(float(size / 1024))
+                else:
+                    size = "{:.2f} KB".format(float(size))
+            return size
         return size
 
     def on_ui_optimize_button_clicked(self, button):

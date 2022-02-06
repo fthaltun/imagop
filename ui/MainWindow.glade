@@ -32,6 +32,7 @@
   </object>
   <object class="GtkWindow" id="ui_main_window">
     <property name="can-focus">False</property>
+    <property name="icon-name">image-x-generic-symbolic</property>
     <child>
       <object class="GtkStack" id="ui_main_stack">
         <property name="visible">True</property>
@@ -43,9 +44,6 @@
             <property name="margin-bottom">5</property>
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
-            <child>
-              <placeholder/>
-            </child>
             <child>
               <object class="GtkScrolledWindow" id="ui_scrolledwindow">
                 <property name="visible">True</property>
@@ -72,7 +70,7 @@
             </child>
             <child>
               <object class="GtkButton" id="ui_optimize_button">
-                <property name="label" translatable="yes">Optimize</property>
+                <property name="label" translatable="yes">Start Optimization</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
