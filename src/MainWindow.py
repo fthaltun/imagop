@@ -247,7 +247,7 @@ class MainWindow(object):
                                          os.path.basename(os.path.splitext(org_image)[0]) + "-optimized.png")
 
                 self.done_info.get_buffer().insert(self.done_info.get_buffer().get_end_iter(),
-                                                   "{} => old size: {} | new size: {}\n".format(
+                                                   "{} | {} => {}\n".format(
                                                        os.path.basename(optimized), self.get_size(org_image),
                                                        self.get_size(optimized)))
 
