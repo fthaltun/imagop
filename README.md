@@ -2,17 +2,17 @@
 
 Image Optimizer is a application for lossy image file optimization. It uses pngquant and zopfli to optimize png images.
 
-Currently only png images are supported.
+Currently only png and jpg images are supported.
 
 ## Dependencies:
 
 * This application is developed based on Python3 and GTK+ 3. Dependencies:
-   - ```gir1.2-glib-2.0 gir1.2-gtk-3.0 gir1.2-notify-0.7 pngquant zopfli```
+   - ```gir1.2-glib-2.0 gir1.2-gtk-3.0 gir1.2-notify-0.7 python3-pil pngquant zopfli```
 
 ## Run Application from Source
 
 * Install dependencies :
-    * ```gir1.2-glib-2.0 gir1.2-gtk-3.0 gir1.2-notify-0.7 pngquant zopfli```
+    * ```gir1.2-glib-2.0 gir1.2-gtk-3.0 gir1.2-notify-0.7 python3-pil pngquant zopfli```
 * Clone the repository :
     * ```git clone https://github.com/fthaltun/image-optimizer.git ~/image-optimizer```
 * Run application :
