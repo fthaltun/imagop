@@ -7,13 +7,15 @@ Created on Sat Feb  5 19:05:13 2022
 """
 
 import locale
-from locale import gettext as _
 import os
 import shutil
 import subprocess
+import threading
 import urllib.parse
+from locale import gettext as _
 
 import gi
+from PIL import Image
 
 gi.require_version("GLib", "2.0")
 gi.require_version("Gtk", "3.0")
@@ -55,6 +57,8 @@ class MainWindow(object):
         self.iconview.set_text_column(1)
         self.output_dir = os.path.join(os.path.expanduser("~"), "image-optimizer-output")
         self.org_images = []
+        self.png_images = []
+        self.jpg_images = []
         self.p_queue = 0
         self.z_queue = 0
 
@@ -79,8 +83,8 @@ class MainWindow(object):
 
         for image in selection.get_uris():
             name = "{}".format(urllib.parse.unquote(image.split("file://")[1]))
-            # currently only png is supported
-            if name.lower().endswith(".png"):
+
+            if name.lower().endswith(".png") or name.lower().endswith(".jpg") or name.lower().endswith(".jpeg"):
                 if name not in self.org_images:
                     try:
                         icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
@@ -109,8 +113,8 @@ class MainWindow(object):
     def image_to_ui(self):
         for image in self.filechooser_dialog.get_filenames():
             name = "{}".format(image)
-            # currently only png is supported
-            if name.lower().endswith(".png"):
+
+            if name.lower().endswith(".png") or name.lower().endswith(".jpg") or name.lower().endswith(".jpeg"):
                 if name not in self.org_images:
                     try:
                         icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
@@ -144,18 +148,53 @@ class MainWindow(object):
 
     def on_ui_optimize_button_clicked(self, button):
         if self.control_output_directory() and self.org_images:
-            self.p_queue = len(self.org_images)
+
+            for org_image in self.org_images:
+                if org_image.lower().endswith(".png"):
+                    self.png_images.append(org_image)
+                elif org_image.lower().endswith(".jpg") or org_image.lower().endswith(".jpeg"):
+                    self.jpg_images.append(org_image)
+
+            self.p_queue = len(self.png_images)
             self.z_queue = self.p_queue
+            self.jpg_queue = len(self.jpg_images)
+
             self.main_stack.set_visible_child_name("splash")
             self.select_image.set_sensitive(False)
-            for org_image in self.org_images:
+
+            for png_image in self.png_images:
                 command = ["/usr/bin/pngquant", "--quality=80-98", "--skip-if-larger", "--force", "--strip", "--speed",
                            "1",
                            "--output", os.path.join(self.output_dir,
-                                                    os.path.basename(os.path.splitext(org_image)[0]) + "-pngquant.png"),
-                           org_image]
+                                                    os.path.basename(os.path.splitext(png_image)[0]) + "-pngquant.png"),
+                           png_image]
 
                 self.start_p_process(command)
+
+            for jpg_image in self.jpg_images:
+                self.jp = threading.Thread(target=self.optimize_jpg, args=(jpg_image,))
+                self.jp.daemon = True
+                self.jp.start()
+
+    def optimize_jpg(self, jpg_image):
+        foo = Image.open(jpg_image)
+        foo = foo.resize(foo.size, Image.ANTIALIAS)
+        foo.save(os.path.join(self.output_dir,
+                              os.path.basename(os.path.splitext(jpg_image)[0]) + "-optimized.jpg"),
+                 optimize=True, quality=80)
+
+        self.jpg_queue -= 1
+
+        if self.z_queue <= 0 and self.jpg_queue <= 0:
+            self.main_stack.set_visible_child_name("complete")
+            self.notify()
+            for jpg_image in self.jpg_images:
+                optimized = os.path.join(self.output_dir,
+                                         os.path.basename(os.path.splitext(jpg_image)[0]) + "-optimized.jpg")
+                self.done_info.get_buffer().insert(self.done_info.get_buffer().get_end_iter(),
+                                                   "{} | {} => {}\n".format(
+                                                       os.path.basename(optimized), self.get_size(jpg_image),
+                                                       self.get_size(optimized)))
 
     def on_ui_open_output_button_clicked(self, button):
         try:
@@ -171,6 +210,8 @@ class MainWindow(object):
         self.z_queue = 0
         self.p_queue = 0
         self.org_images = []
+        self.png_images = []
+        self.jpg_images = []
         self.liststore.clear()
         start, end = self.done_info.get_buffer().get_bounds()
         self.done_info.get_buffer().delete(start, end)
@@ -202,15 +243,15 @@ class MainWindow(object):
         self.p_queue -= 1
         if self.p_queue <= 0:
             print("pngquant processes done, starting zopflipng processes")
-            for org_image in self.org_images:
+            for png_image in self.png_images:
                 pngquanted = os.path.join(self.output_dir,
-                                          os.path.basename(os.path.splitext(org_image)[0]) + "-pngquant.png")
+                                          os.path.basename(os.path.splitext(png_image)[0]) + "-pngquant.png")
                 zopflipnged = os.path.join(self.output_dir,
-                                           os.path.basename(os.path.splitext(org_image)[0]) + "-optimized.png")
+                                           os.path.basename(os.path.splitext(png_image)[0]) + "-optimized.png")
 
                 # if pngquanted file is bigger than org file then we use org file
                 if not os.path.isfile(pngquanted):
-                    shutil.copy2(org_image, pngquanted)
+                    shutil.copy2(png_image, pngquanted)
                 command = ["/usr/bin/zopflipng", "-y", "--lossy_transparent", pngquanted, zopflipnged]
                 self.start_z_process(command)
 
@@ -242,20 +283,28 @@ class MainWindow(object):
         if self.z_queue <= 0:
             self.main_stack.set_visible_child_name("complete")
             self.notify()
-            for org_image in self.org_images:
+            for png_image in self.png_images:
 
                 optimized = os.path.join(self.output_dir,
-                                         os.path.basename(os.path.splitext(org_image)[0]) + "-optimized.png")
+                                         os.path.basename(os.path.splitext(png_image)[0]) + "-optimized.png")
 
                 self.done_info.get_buffer().insert(self.done_info.get_buffer().get_end_iter(),
                                                    "{} | {} => {}\n".format(
-                                                       os.path.basename(optimized), self.get_size(org_image),
+                                                       os.path.basename(optimized), self.get_size(png_image),
                                                        self.get_size(optimized)))
 
                 pngquanted = os.path.join(self.output_dir,
-                                          os.path.basename(os.path.splitext(org_image)[0]) + "-pngquant.png")
+                                          os.path.basename(os.path.splitext(png_image)[0]) + "-pngquant.png")
                 if os.path.isfile(pngquanted):
                     os.remove(pngquanted)
+
+            for jpg_image in self.jpg_images:
+                optimized = os.path.join(self.output_dir,
+                                         os.path.basename(os.path.splitext(jpg_image)[0]) + "-optimized.jpg")
+                self.done_info.get_buffer().insert(self.done_info.get_buffer().get_end_iter(),
+                                                   "{} | {} => {}\n".format(
+                                                       os.path.basename(optimized), self.get_size(jpg_image),
+                                                       self.get_size(optimized)))
 
     def notify(self):
         if Notify.is_initted():
