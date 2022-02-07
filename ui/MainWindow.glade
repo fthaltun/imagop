@@ -152,7 +152,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="shadow-type">in</property>
-                <property name="min-content-width">520</property>
+                <property name="min-content-width">529</property>
                 <property name="min-content-height">300</property>
                 <child>
                   <object class="GtkIconView" id="ui_iconview">
