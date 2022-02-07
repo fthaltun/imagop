@@ -178,6 +178,9 @@
                 <property name="halign">center</property>
                 <property name="image">image2</property>
                 <signal name="clicked" handler="on_ui_optimize_button_clicked" swapped="no"/>
+                <style>
+                  <class name="suggested-action"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
