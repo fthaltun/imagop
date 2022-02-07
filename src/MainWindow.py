@@ -18,7 +18,7 @@ gi.require_version("GLib", "2.0")
 gi.require_version("Gtk", "3.0")
 gi.require_version("Notify", "0.7")
 gi.require_version("GdkPixbuf", "2.0")
-from gi.repository import Gtk, GObject, GLib, GdkPixbuf
+from gi.repository import Gtk, GObject, GLib, GdkPixbuf, Gdk
 
 locale.bindtextdomain('image-optimizer', '/usr/share/locale')
 locale.textdomain('image-optimizer')
@@ -71,6 +71,23 @@ class MainWindow(object):
         self.select_image = self.GtkBuilder.get_object("ui_selectimage")
         self.done_info = self.GtkBuilder.get_object("ui_done_info")
 
+        self.iconview.enable_model_drag_dest([Gtk.TargetEntry.new('text/uri-list', 0, 0)],
+                                             Gdk.DragAction.DEFAULT | Gdk.DragAction.COPY)
+        self.iconview.connect("drag-data-received", self.drag_data_received)
+
+    def drag_data_received(self, treeview, context, posx, posy, selection, info, timestamp):
+        for image in selection.get_uris():
+            name = "{}".format(image.split("file://")[1])
+            # currently only png is supported
+            if name.lower().endswith(".png"):
+                if name not in self.org_images:
+                    try:
+                        icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
+                        self.liststore.append([icon, os.path.basename(name)])
+                        self.org_images.append(name)
+                    except gi.repository.GLib.Error:
+                        print("{} is not an image so skipped".format(name))
+
     def on_ui_about_button_clicked(self, button):
         self.about_dialog.run()
         self.about_dialog.hide()
@@ -95,7 +112,7 @@ class MainWindow(object):
             if name.lower().endswith(".png"):
                 if name not in self.org_images:
                     try:
-                        icon = GdkPixbuf.Pixbuf.new_from_file_at_size(image, 100, 100)
+                        icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
                         self.liststore.append([icon, os.path.basename(name)])
                         self.org_images.append(name)
                     except gi.repository.GLib.Error:
