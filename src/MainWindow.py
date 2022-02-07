@@ -160,7 +160,7 @@ class MainWindow(object):
 
     def on_ui_open_output_button_clicked(self, button):
         try:
-            subprocess.check_call(["open", self.output_dir])
+            subprocess.check_call(["xdg-open", self.output_dir])
             return True
         except subprocess.CalledProcessError:
             print("error opening " + self.output_dir)
