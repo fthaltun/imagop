@@ -11,6 +11,7 @@ from locale import gettext as _
 import os
 import shutil
 import subprocess
+import urllib.parse
 
 import gi
 
@@ -76,8 +77,9 @@ class MainWindow(object):
         self.iconview.connect("drag-data-received", self.drag_data_received)
 
     def drag_data_received(self, treeview, context, posx, posy, selection, info, timestamp):
+
         for image in selection.get_uris():
-            name = "{}".format(image.split("file://")[1])
+            name = "{}".format(urllib.parse.unquote(image.split("file://")[1]))
             # currently only png is supported
             if name.lower().endswith(".png"):
                 if name not in self.org_images:
