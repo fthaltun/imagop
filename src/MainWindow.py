@@ -19,7 +19,7 @@ gi.require_version("GLib", "2.0")
 gi.require_version("Gtk", "3.0")
 gi.require_version("Notify", "0.7")
 gi.require_version("GdkPixbuf", "2.0")
-from gi.repository import Gtk, GObject, GLib, GdkPixbuf, Gdk
+from gi.repository import Gtk, GObject, GLib, GdkPixbuf, Gdk, Notify
 
 locale.bindtextdomain('image-optimizer', '/usr/share/locale')
 locale.textdomain('image-optimizer')
@@ -36,7 +36,6 @@ class MainWindow(object):
         except GObject.GError:
             print("Error reading GUI file: " + self.main_window_ui_filename)
             raise
-
 
         self.define_components()
 
@@ -242,7 +241,7 @@ class MainWindow(object):
         self.z_queue -= 1
         if self.z_queue <= 0:
             self.main_stack.set_visible_child_name("complete")
-
+            self.notify()
             for org_image in self.org_images:
 
                 optimized = os.path.join(self.output_dir,
@@ -257,3 +256,13 @@ class MainWindow(object):
                                           os.path.basename(os.path.splitext(org_image)[0]) + "-pngquant.png")
                 if os.path.isfile(pngquanted):
                     os.remove(pngquanted)
+
+    def notify(self):
+        if Notify.is_initted():
+            Notify.uninit()
+
+        message = _("Image optimization completed.")
+
+        Notify.init("image-optimizer")
+        notification = Notify.Notification.new(summary=message, icon="image-x-generic-symbolic")
+        notification.show()
