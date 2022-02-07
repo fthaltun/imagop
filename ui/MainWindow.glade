@@ -30,7 +30,7 @@
     <property name="version">0.1.0</property>
     <property name="website">https://github.com/fthaltun/image-optimizer</property>
     <property name="authors">Fatih Altun</property>
-    <property name="translator-credits" translatable="yes">Fatih Altun</property>
+    <property name="translator-credits">Fatih Altun</property>
     <property name="logo-icon-name">image-x-generic-symbolic</property>
     <property name="license-type">gpl-3-0</property>
     <child internal-child="vbox">
@@ -150,7 +150,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="shadow-type">in</property>
-                <property name="min-content-width">530</property>
+                <property name="min-content-width">520</property>
                 <property name="min-content-height">300</property>
                 <child>
                   <object class="GtkIconView" id="ui_iconview">
@@ -321,7 +321,10 @@
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="homogeneous">True</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">21</property>
                 <child>
                   <object class="GtkButton" id="ui_open_output_button">
                     <property name="label" translatable="yes">Show Optimized Files</property>
