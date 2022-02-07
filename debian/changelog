@@ -1,5 +1,25 @@
 image-optimizer (0.1.0~beta1) unstable; urgency=medium
 
-  * Initial commit
+  * Initial Commit
+  * Add base functions and ui implementation
+  * Add new GLib spawn for zopflipng optimization
+  * Add image compress info textview to complete stack
+  * Add png file control while adding images to ui
+  * Add setup.py
+  * Add desktop file
+  * Add script file
+  * Add debian folder for deb packaging
+  * Add about_dialog
+  * Update changing visible to sensitive of select button
+  * Update window position as center
+  * Add LICENSE
+  * Add screenshots
+  * Add README.md
+  * Update README.md
+  * Add drag and drop ability for select images
+  * Update completed optimization info text
+  * Add translations with Turkish translations
+  * Update complete page buttons ui
+  * Fix drag and drop file names with urllib unquote
 
- -- Fatih Altun <fatih.altun@pardus.org.tr>  Sat, 05 Jun 2021 05:14:35 +0300
+ -- Fatih Altun <fatih.altun@pardus.org.tr>  Mon, 07 Feb 2022 18:00:32 +0300
