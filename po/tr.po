@@ -1,0 +1,60 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Fatih Altun <fatih.altun@pardus.org.tr>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-07 15:21+0300\n"
+"PO-Revision-Date: 2022-02-07 15:24+0300\n"
+"Last-Translator: Fatih Altun <fatih.altun@pardus.org.tr>\n"
+"Language-Team: Turkish <dev@pardus.org.tr>\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Gtranslator 3.38.0\n"
+
+#: ui/MainWindow.glade:94 ui/MainWindow.glade:382
+msgid "Select Image(s)"
+msgstr "Resim(leri) Seçin"
+
+#: ui/MainWindow.glade:97
+msgid "Select"
+msgstr "Seç"
+
+#: ui/MainWindow.glade:112
+msgid "Cancel"
+msgstr "İptal"
+
+#: ui/MainWindow.glade:174
+msgid "Start Optimization"
+msgstr "Optimizasyonu Başlat"
+
+#: ui/MainWindow.glade:203
+msgid "Optimization is in progress."
+msgstr "Optimizasyon devam ediyor."
+
+#: ui/MainWindow.glade:227
+msgid "Please wait ..."
+msgstr "Lütfen bekleyin ..."
+
+#: ui/MainWindow.glade:259
+msgid "Operation completed."
+msgstr "İşlem tamamlandı."
+
+#: ui/MainWindow.glade:327
+msgid "Show Optimized Files"
+msgstr "Optimize Edilmiş Dosyaları Göster"
+
+#: ui/MainWindow.glade:344
+msgid "Optimize New Images"
+msgstr "Yeni Resimleri Optimize Edin"
+
+#: ui/MainWindow.glade:378 src/MainWindow.py:52
+msgid "Image Optimizer"
+msgstr "Resim Optimize Edici"

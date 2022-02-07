@@ -20,7 +20,8 @@ data_files = [
     ("/usr/bin", ["image-optimizer"]),
     ("/usr/share/applications", ["com.github.fthaltun.image-optimizer.desktop"]),
     ("/usr/share/image-optimizer/ui", ["ui/MainWindow.glade"]),
-    ("/usr/share/image-optimizer/src", ["src/main.py", "src/MainWindow.py", "src/__version__"])
+    ("/usr/share/image-optimizer/src", ["src/main.py", "src/MainWindow.py", "src/__version__"]),
+    ("/usr/share/locale/tr/LC_MESSAGES", ["po/tr/LC_MESSAGES/image-optimizer.mo"]),
 ]
 
 setup(
