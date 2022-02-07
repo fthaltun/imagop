@@ -159,9 +159,9 @@
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="margin">6</property>
-                    <property name="selection-mode">none</property>
                     <property name="model">ui_liststore</property>
                     <property name="item-width">100</property>
+                    <signal name="item-activated" handler="on_ui_iconview_item_activated" swapped="no"/>
                   </object>
                 </child>
               </object>

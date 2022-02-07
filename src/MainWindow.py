@@ -93,6 +93,11 @@ class MainWindow(object):
                     except gi.repository.GLib.Error:
                         print("{} is not an image so skipped".format(name))
 
+    def on_ui_iconview_item_activated(self, icon_view, path):
+        treeiter = self.liststore.get_iter(path)
+        self.liststore.remove(treeiter)
+        del self.org_images[path.get_indices()[0]]
+
     def on_ui_about_button_clicked(self, button):
         self.about_dialog.run()
         self.about_dialog.hide()
