@@ -26,21 +26,30 @@ Currently only png and jpg images are supported.
 
 ## Samples
 
-> #### Original (22.5 KB)
+> #### Original (png) (22.5 KB)
 >
 > ![Original 1](screenshots/sample-original-1.png)
 
-> #### Optimized (5.8 KB)
+> #### Optimized (png) (5.8 KB)
 >
 > ![Optimized 1](screenshots/sample-optimized-1.png)
 ---
-> #### Original (551.6 KB)
+> #### Original (png) (551.6 KB)
 >
 > ![Original 2](screenshots/sample-original-2.png)
 
-> #### Optimized (191.5 KB)
+> #### Optimized (png) (191.5 KB)
 >
 > ![Optimized 2](screenshots/sample-optimized-2.png)
+
+---
+> #### Original (jpg) (273.2 KB)
+>
+> ![Original 2](screenshots/sample-original-jpg-1.jpg)
+
+> #### Optimized (jpg) (51.7 KB)
+>
+> ![Optimized 2](screenshots/sample-optimized-jpg-1.jpg)
 
 ## Screenshots
 
