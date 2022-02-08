@@ -1,3 +1,19 @@
+image-optimizer (0.1.0~beta2) unstable; urgency=medium
+
+  * Fix open output directory command
+  * Add notify function
+  * Add suggested-action class to start button
+  * Add support for jpg images with using python3-pil library
+  * Update sw min-content-width
+  * Add remove image from ui ability on double click to images
+  * Add python3-pil to depends
+  * Update README.md
+  * Add sample jpg images
+  * Update app screenshots
+  * Update README.md
+
+ -- Fatih Altun <fatih.altun@pardus.org.tr>  Tue, 08 Feb 2022 11:19:34 +0300
+
 image-optimizer (0.1.0~beta1) unstable; urgency=medium
 
   * Initial Commit
