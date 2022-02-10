@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 17:52+0300\n"
+"POT-Creation-Date: 2022-02-10 18:19+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,43 +17,47 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ui/MainWindow.glade:96 ui/MainWindow.glade:391
+#: ui/MainWindow.glade:31
+msgid "Optimizes the sizes of images."
+msgstr ""
+
+#: ui/MainWindow.glade:97 ui/MainWindow.glade:392
 msgid "Select Image(s)"
 msgstr ""
 
-#: ui/MainWindow.glade:99
+#: ui/MainWindow.glade:100
 msgid "Select"
 msgstr ""
 
-#: ui/MainWindow.glade:114
+#: ui/MainWindow.glade:115
 msgid "Cancel"
 msgstr ""
 
-#: ui/MainWindow.glade:176
+#: ui/MainWindow.glade:177
 msgid "Start Optimization"
 msgstr ""
 
-#: ui/MainWindow.glade:208
+#: ui/MainWindow.glade:209
 msgid "Optimization is in progress."
 msgstr ""
 
-#: ui/MainWindow.glade:232
+#: ui/MainWindow.glade:233
 msgid "Please wait ..."
 msgstr ""
 
-#: ui/MainWindow.glade:264
+#: ui/MainWindow.glade:265
 msgid "Operation completed."
 msgstr ""
 
-#: ui/MainWindow.glade:335
+#: ui/MainWindow.glade:336
 msgid "Show Optimized Files"
 msgstr ""
 
-#: ui/MainWindow.glade:352
+#: ui/MainWindow.glade:353
 msgid "Optimize New Images"
 msgstr ""
 
-#: ui/MainWindow.glade:387
+#: ui/MainWindow.glade:388
 msgid "Image Optimizer"
 msgstr ""
 
