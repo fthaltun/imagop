@@ -1,11 +1,12 @@
 [Desktop Entry]
-Name=Image Optimizer
-Name[tr]=Resim Optimize Edici
+Name=ImagOP
 Comment=Optimizes the sizes of images
 Comment[tr]=Resimlerin boyutlarını optimize eder
-Exec=image-optimizer
-Icon=image-x-generic-symbolic
+Exec=imagop
+Icon=imagop
 Terminal=false
 Type=Application
 Categories=GTK;Graphics;
 StartupNotify=true
+Keywords=image;optimizer;imagop;compress;press
+Keywords[tr]=resim;optimize;imagop;sıkıştır

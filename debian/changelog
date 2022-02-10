@@ -1,4 +1,4 @@
-image-optimizer (0.1.0~beta2) unstable; urgency=medium
+imagop (0.1.0~beta2) unstable; urgency=medium
 
   * Fix open output directory command
   * Add notify function
@@ -14,7 +14,7 @@ image-optimizer (0.1.0~beta2) unstable; urgency=medium
 
  -- Fatih Altun <fatih.altun@pardus.org.tr>  Tue, 08 Feb 2022 11:19:34 +0300
 
-image-optimizer (0.1.0~beta1) unstable; urgency=medium
+imagop (0.1.0~beta1) unstable; urgency=medium
 
   * Initial Commit
   * Add base functions and ui implementation

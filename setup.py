@@ -17,24 +17,25 @@ if os.path.exists(changelog):
     f.close()
 
 data_files = [
-    ("/usr/bin", ["image-optimizer"]),
-    ("/usr/share/applications", ["com.github.fthaltun.image-optimizer.desktop"]),
-    ("/usr/share/image-optimizer/ui", ["ui/MainWindow.glade"]),
-    ("/usr/share/image-optimizer/src", ["src/main.py", "src/MainWindow.py", "src/__version__"]),
-    ("/usr/share/locale/tr/LC_MESSAGES", ["po/tr/LC_MESSAGES/image-optimizer.mo"]),
+    ("/usr/bin", ["imagop"]),
+    ("/usr/share/applications", ["com.github.fthaltun.imagop.desktop"]),
+    ("/usr/share/imagop/ui", ["ui/MainWindow.glade"]),
+    ("/usr/share/imagop/src", ["src/main.py", "src/MainWindow.py", "src/__version__"]),
+    ("/usr/share/locale/tr/LC_MESSAGES", ["po/tr/LC_MESSAGES/imagop.mo"]),
+    ("/usr/share/icons/hicolor/scalable/apps/", ["ui/imagop.svg"])
 ]
 
 setup(
-    name="Image Optimizer",
+    name="ImagOP",
     version=version,
     packages=find_packages(),
-    scripts=["image-optimizer"],
+    scripts=["imagop"],
     install_requires=["PyGObject"],
     data_files=data_files,
     author="Fatih Altun",
     author_email="fatih.altun@pardus.org.tr",
     description="Optimizes the sizes of images",
     license="GPLv3",
-    keywords="image optimizer",
-    url="https://github.com/fthaltun/image-optimizer",
+    keywords="imagop, image, optimizer",
+    url="https://github.com/fthaltun/imagop",
 )

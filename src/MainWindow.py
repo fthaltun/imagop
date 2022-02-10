@@ -23,8 +23,8 @@ gi.require_version("Notify", "0.7")
 gi.require_version("GdkPixbuf", "2.0")
 from gi.repository import Gtk, GObject, GLib, GdkPixbuf, Gdk, Notify
 
-locale.bindtextdomain('image-optimizer', '/usr/share/locale')
-locale.textdomain('image-optimizer')
+locale.bindtextdomain('imagop', '/usr/share/locale')
+locale.textdomain('imagop')
 
 
 class MainWindow(object):
@@ -51,11 +51,9 @@ class MainWindow(object):
         except:
             pass
 
-        self.about_dialog.set_program_name(_("Image Optimizer"))
-
         self.iconview.set_pixbuf_column(0)
         self.iconview.set_text_column(1)
-        self.output_dir = os.path.join(os.path.expanduser("~"), "image-optimizer-output")
+        self.output_dir = os.path.join(os.path.expanduser("~"), "imagop-output")
         self.org_images = []
         self.png_images = []
         self.jpg_images = []
@@ -317,6 +315,6 @@ class MainWindow(object):
 
         message = _("Image optimization completed.")
 
-        Notify.init("image-optimizer")
-        notification = Notify.Notification.new(summary=message, icon="image-x-generic-symbolic")
+        Notify.init("imagop")
+        notification = Notify.Notification.new(summary="ImagOP", body=message, icon="imagop")
         notification.show()

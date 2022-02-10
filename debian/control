@@ -1,12 +1,12 @@
-Source: image-optimizer
+Source: imagop
 Section: graphics
 Priority: optional
 Maintainer: Fatih Altun <fatih.altun@pardus.org.tr>
 Build-Depends: debhelper (>= 10), dh-python, python3-all, python3-setuptools
 Standards-Version: 4.3.0
-Homepage: https://github.com/fthaltun/image-optimizer
+Homepage: https://github.com/fthaltun/imagop
 
-Package: image-optimizer
+Package: imagop
 Architecture: all
 Depends: ${misc:Depends},
          ${python3:Depends},

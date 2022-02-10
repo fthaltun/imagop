@@ -1,8 +1,10 @@
-# Image Optimizer
+# ImagOP
 
-Image Optimizer is a application for lossy image file optimization. It uses pngquant and zopfli to optimize png images.
+ImagOP is an application for lossy image file optimization. It uses pngquant and zopfli to optimize png images.
 
 Currently only png and jpg images are supported.
+
+You can add images to the application interface by drag and dropping them.
 
 ## Dependencies:
 
@@ -14,15 +16,15 @@ Currently only png and jpg images are supported.
 * Install dependencies :
     * ```gir1.2-glib-2.0 gir1.2-gtk-3.0 gir1.2-notify-0.7 python3-pil pngquant zopfli```
 * Clone the repository :
-    * ```git clone https://github.com/fthaltun/image-optimizer.git ~/image-optimizer```
+    * ```git clone https://github.com/fthaltun/imagop.git ~/imagop```
 * Run application :
-    * ```python3 ~/image-optimizer/src/main.py```
+    * ```python3 ~/imagop/src/main.py```
 
 ## Build deb package
 
 * `sudo apt install devscripts git-buildpackage`
 * `sudo mk-build-deps -ir`
-* `gbp buildpackage --git-export-dir=/tmp/build/image-optimizer -us -uc`
+* `gbp buildpackage --git-export-dir=/tmp/build/imagop -us -uc`
 
 ## Samples
 
@@ -53,8 +55,8 @@ Currently only png and jpg images are supported.
 
 ## Screenshots
 
-![Image Optimizer 1](screenshots/image-optimizer-1.png)
+![ImagOP](screenshots/imagop-1.png)
 
-![Image Optimizer 2](screenshots/image-optimizer-2.png)
+![ImagOP](screenshots/imagop-2.png)
 
-![Image Optimizer 3](screenshots/image-optimizer-3.png)
+![ImagOP](screenshots/imagop-3.png)

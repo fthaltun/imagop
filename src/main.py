@@ -16,7 +16,7 @@ from gi.repository import Gtk, Gio
 
 class Application(Gtk.Application):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, application_id="com.github.fthaltun.image-optimizer",
+        super().__init__(*args, application_id="com.github.fthaltun.imagop",
                          flags=Gio.ApplicationFlags(0), **kwargs)
         self.window = None
 
