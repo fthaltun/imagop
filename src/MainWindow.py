@@ -101,8 +101,8 @@ class MainWindow(object):
     def on_ui_selectimage_clicked(self, button):
         file_chooser = Gtk.FileChooserDialog(title=_("Select Image(s)"), parent=self.main_window,
                                         action=Gtk.FileChooserAction.OPEN)
-        file_chooser.add_button("_Cancel", Gtk.ResponseType.CANCEL)
-        file_chooser.add_button("_Open", Gtk.ResponseType.ACCEPT).get_style_context().add_class("suggested-action")
+        file_chooser.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
+        file_chooser.add_button(_("Open"), Gtk.ResponseType.ACCEPT).get_style_context().add_class("suggested-action")
         file_chooser.set_select_multiple(True)
 
         filter_all = Gtk.FileFilter()
