@@ -159,9 +159,9 @@ class MainWindow(object):
             if type(size) is int:
                 size = size / 1024
                 if size > 1024:
-                    size = "{:.2f} MB".format(float(size / 1024))
+                    size = "{:.2f} MiB".format(float(size / 1024))
                 else:
-                    size = "{:.2f} KB".format(float(size))
+                    size = "{:.2f} KiB".format(float(size))
             return size
         return size
 
