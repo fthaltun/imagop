@@ -65,8 +65,6 @@ class MainWindow(object):
     def define_components(self):
         self.main_window = self.GtkBuilder.get_object("ui_main_window")
         self.about_dialog = self.GtkBuilder.get_object("ui_about_dialog")
-        self.filechooser_dialog = self.GtkBuilder.get_object("ui_filechooser_dialog")
-        self.filechooser_button = self.GtkBuilder.get_object("ui_filechooser_button")
         self.iconview = self.GtkBuilder.get_object("ui_iconview")
         self.liststore = self.GtkBuilder.get_object("ui_liststore")
         self.main_stack = self.GtkBuilder.get_object("ui_main_stack")
@@ -100,21 +98,40 @@ class MainWindow(object):
         self.about_dialog.run()
         self.about_dialog.hide()
 
-    def on_ui_selectimage_button_clicked(self, button):
-        self.image_to_ui()
-
-    def on_ui_filechooser_dialog_file_activated(self, widget):
-        self.image_to_ui()
-
-    def on_ui_selectcancel_button_clicked(self, button):
-        self.filechooser_dialog.hide()
-
     def on_ui_selectimage_clicked(self, button):
-        self.filechooser_dialog.run()
-        self.filechooser_dialog.hide()
+        file_chooser = Gtk.FileChooserDialog(title=_("Select Image(s)"), parent=self.main_window,
+                                        action=Gtk.FileChooserAction.OPEN)
+        file_chooser.add_button("_Cancel", Gtk.ResponseType.CANCEL)
+        file_chooser.add_button("_Open", Gtk.ResponseType.ACCEPT).get_style_context().add_class("suggested-action")
+        file_chooser.set_select_multiple(True)
 
-    def image_to_ui(self):
-        for image in self.filechooser_dialog.get_filenames():
+        filter_all = Gtk.FileFilter()
+        filter_all.set_name(_("All supported files"))
+        filter_all.add_mime_type("image/png")
+        filter_all.add_mime_type("image/jpg")
+        filter_all.add_mime_type("image/jpeg")
+
+        filter_png = Gtk.FileFilter()
+        filter_png.set_name(_("PNG files"))
+        filter_png.add_mime_type("image/png")
+
+        filter_jpg = Gtk.FileFilter()
+        filter_jpg.set_name(_("JPG/JPEG files"))
+        filter_jpg.add_mime_type("image/jpg")
+        filter_jpg.add_mime_type("image/jpeg")
+
+        file_chooser.add_filter(filter_all)
+        file_chooser.add_filter(filter_png)
+        file_chooser.add_filter(filter_jpg)
+        file_chooser.set_filter(filter_all)
+
+        response = file_chooser.run()
+        if response == Gtk.ResponseType.ACCEPT:
+            self.image_to_ui(file_chooser.get_filenames())
+        file_chooser.destroy()
+
+    def image_to_ui(self, filenames):
+        for image in filenames:
             name = "{}".format(image)
 
             if name.lower().endswith(".png") or name.lower().endswith(".jpg") or name.lower().endswith(".jpeg"):
@@ -125,7 +142,6 @@ class MainWindow(object):
                         self.org_images.append(name)
                     except gi.repository.GLib.Error:
                         print("{} is not an image so skipped".format(name))
-        self.filechooser_dialog.hide()
 
     def control_output_directory(self):
         try:
