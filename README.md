@@ -1,10 +1,12 @@
 # ImagOP
 
-ImagOP is an application for lossy image file optimization. It uses pngquant and zopfli to optimize png images.
+ImagOP (image optimizer) is an application for lossy image file optimization.
 
 Currently only png and jpg images are supported.
+It uses pngquant and zopfli to optimize png images, python3-pil to optimize jpg images. 
 
 You can add images to the application interface by drag and dropping them.
+You can remove the pictures from the list in the interface by double-clicking them.
 
 ## Dependencies:
 
