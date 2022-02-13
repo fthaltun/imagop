@@ -16,6 +16,7 @@ from locale import gettext as _
 
 import gi
 from PIL import Image
+from PIL import UnidentifiedImageError
 
 gi.require_version("GLib", "2.0")
 gi.require_version("Gtk", "3.0")
@@ -79,15 +80,26 @@ class MainWindow(object):
 
         for image in selection.get_uris():
             name = "{}".format(urllib.parse.unquote(image.split("file://")[1]))
+            try:
+                img = Image.open(name)
+            except UnidentifiedImageError:
+                print("{} is not an image so skipped.".format(name))
+                continue
+            except IsADirectoryError:
+                print("{} is a directory, so skipping for now.".format(name))
+                continue
+            except Exception as e:
+                print("{}".format(e))
+                continue
 
-            if name.lower().endswith(".png") or name.lower().endswith(".jpg") or name.lower().endswith(".jpeg"):
-                if name not in self.org_images:
-                    try:
-                        icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
-                        self.liststore.append([icon, os.path.basename(name)])
-                        self.org_images.append(name)
-                    except gi.repository.GLib.Error:
-                        print("{} is not an image so skipped".format(name))
+            if (img.format == "JPEG" or img.format == "PNG") and name not in self.org_images:
+
+                try:
+                    icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
+                    self.liststore.append([icon, os.path.basename(name)])
+                    self.org_images.append(name)
+                except gi.repository.GLib.Error:
+                    print("{} is not an image so skipped.".format(name))
 
     def on_ui_iconview_item_activated(self, icon_view, path):
         treeiter = self.liststore.get_iter(path)
@@ -100,7 +112,7 @@ class MainWindow(object):
 
     def on_ui_selectimage_clicked(self, button):
         file_chooser = Gtk.FileChooserDialog(title=_("Select Image(s)"), parent=self.main_window,
-                                        action=Gtk.FileChooserAction.OPEN)
+                                             action=Gtk.FileChooserAction.OPEN)
         file_chooser.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
         file_chooser.add_button(_("Open"), Gtk.ResponseType.ACCEPT).get_style_context().add_class("suggested-action")
         file_chooser.set_select_multiple(True)
@@ -134,7 +146,19 @@ class MainWindow(object):
         for image in filenames:
             name = "{}".format(image)
 
-            if name.lower().endswith(".png") or name.lower().endswith(".jpg") or name.lower().endswith(".jpeg"):
+            try:
+                img = Image.open(name)
+            except UnidentifiedImageError:
+                print("{} is not an image so skipped.".format(name))
+                continue
+            except IsADirectoryError:
+                print("{} is a directory, so skipping for now.".format(name))
+                continue
+            except Exception as e:
+                print("{}".format(e))
+                continue
+
+            if (img.format == "JPEG" or img.format == "PNG") and name not in self.org_images:
                 if name not in self.org_images:
                     try:
                         icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
