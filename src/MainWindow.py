@@ -193,9 +193,9 @@ class MainWindow(object):
         if self.control_output_directory() and self.org_images:
 
             for org_image in self.org_images:
-                if org_image.lower().endswith(".png"):
+                if Image.open(org_image).format == "PNG":
                     self.png_images.append(org_image)
-                elif org_image.lower().endswith(".jpg") or org_image.lower().endswith(".jpeg"):
+                elif Image.open(org_image).format == "JPEG":
                     self.jpg_images.append(org_image)
 
             self.p_queue = len(self.png_images)
