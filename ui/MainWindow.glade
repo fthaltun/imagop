@@ -86,6 +86,22 @@
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
             <child>
+              <object class="GtkLabel" id="ui_dd_info_label">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="margin-top">5</property>
+                <property name="label" translatable="yes">&lt;small&gt;You can drag and drop images to the field below.&lt;/small&gt;</property>
+                <property name="use-markup">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkScrolledWindow" id="ui_scrolledwindow">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>

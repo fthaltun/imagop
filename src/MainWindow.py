@@ -71,13 +71,15 @@ class MainWindow(object):
         self.main_stack = self.GtkBuilder.get_object("ui_main_stack")
         self.select_image = self.GtkBuilder.get_object("ui_selectimage")
         self.done_info = self.GtkBuilder.get_object("ui_done_info")
+        self.dd_info_label = self.GtkBuilder.get_object("ui_dd_info_label")
 
         self.iconview.enable_model_drag_dest([Gtk.TargetEntry.new('text/uri-list', 0, 0)],
                                              Gdk.DragAction.DEFAULT | Gdk.DragAction.COPY)
         self.iconview.connect("drag-data-received", self.drag_data_received)
 
     def drag_data_received(self, treeview, context, posx, posy, selection, info, timestamp):
-
+        if self.dd_info_label.get_visible():
+            self.dd_info_label.set_visible(False)
         for image in selection.get_uris():
             name = "{}".format(urllib.parse.unquote(image.split("file://")[1]))
             try:
@@ -141,6 +143,9 @@ class MainWindow(object):
         if response == Gtk.ResponseType.ACCEPT:
             self.image_to_ui(file_chooser.get_filenames())
         file_chooser.destroy()
+
+        if self.dd_info_label.get_visible():
+            self.dd_info_label.set_visible(False)
 
     def image_to_ui(self, filenames):
         for image in filenames:
