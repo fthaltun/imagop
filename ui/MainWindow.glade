@@ -78,6 +78,7 @@
       <object class="GtkStack" id="ui_main_stack">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
+        <property name="transition-type">slide-left-right</property>
         <child>
           <object class="GtkBox" id="select_box">
             <property name="visible">True</property>
