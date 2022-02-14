@@ -1,3 +1,15 @@
+imagop (0.1.0~beta4) unstable; urgency=medium
+
+  * Update main_window icon
+  * Update README.md
+  * Fix file chooser dialog
+  * Fix file size typo
+  * Update translations
+  * Update image format control as using python3-pil
+  * Update file format control on optimize_clicked func too
+
+ -- Fatih Altun <fatih.altun@pardus.org.tr>  Mon, 14 Feb 2022 16:55:26 +0300
+
 imagop (0.1.0~beta3) unstable; urgency=medium
 
   [ Yusuf Düzgün ]
