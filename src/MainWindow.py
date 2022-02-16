@@ -156,6 +156,11 @@ class MainWindow(object):
         if self.dd_info_label.get_visible():
             self.dd_info_label.set_visible(False)
 
+        if self.main_stack.get_visible_child_name() == "settings":
+            self.main_stack.set_visible_child_name("select")
+            self.settings_counter +=1
+            self.settings_button_image.set_from_icon_name("preferences-system-symbolic", Gtk.IconSize.BUTTON)
+
     def image_to_ui(self, filenames):
         for image in filenames:
             name = "{}".format(image)
@@ -289,6 +294,11 @@ class MainWindow(object):
         if int(adjusment.get_value()) != user_jpeg_quality:
             self.UserSettings.writeConfig(int(adjusment.get_value()))
             self.user_settings()
+
+    def on_ui_defaults_button_clicked(self, button):
+        self.UserSettings.createDefaultConfig(force=True)
+        self.user_settings()
+        self.jpeg_adjusment.set_value(self.UserSettings.config_jpeg_quality)
 
     def start_p_process(self, params):
         pid, stdin, stdout, stderr = GLib.spawn_async(params, flags=GLib.SpawnFlags.DO_NOT_REAP_CHILD,

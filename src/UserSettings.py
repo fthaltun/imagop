@@ -13,14 +13,16 @@ from configparser import ConfigParser
 class UserSettings(object):
     def __init__(self):
 
+        self.default_jpeg_quality = 80
+
         userhome = str(Path.home())
         self.configdir = userhome + "/.config/imagop/"
         self.configfile = "settings.ini"
         self.config = ConfigParser(strict=False)
-        self.config_jpeg_quality = 80
+        self.config_jpeg_quality = self.default_jpeg_quality
 
     def createDefaultConfig(self, force=False):
-        self.config['ImagOP'] = {'JpegQuality': '80'}
+        self.config['ImagOP'] = {'JpegQuality': self.default_jpeg_quality}
 
         if not Path.is_file(Path(self.configdir + self.configfile)) or force:
             if self.createDir(self.configdir):
@@ -35,7 +37,7 @@ class UserSettings(object):
             print("{}".format(e))
             print("user config read error ! Trying create defaults")
             # if not read; try to create defaults
-            self.config_jpeg_quality = 80
+            self.config_jpeg_quality = self.default_jpeg_quality
             try:
                 self.createDefaultConfig(force=True)
             except Exception as e:
