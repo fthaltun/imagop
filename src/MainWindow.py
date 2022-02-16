@@ -23,6 +23,8 @@ gi.require_version("Notify", "0.7")
 gi.require_version("GdkPixbuf", "2.0")
 from gi.repository import Gtk, GObject, GLib, GdkPixbuf, Gdk, Notify
 
+from UserSettings import  UserSettings
+
 locale.bindtextdomain('imagop', '/usr/share/locale')
 locale.textdomain('imagop')
 
@@ -40,6 +42,7 @@ class MainWindow(object):
             raise
 
         self.define_components()
+        self.user_settings()
 
         self.main_window.set_application(application)
 
@@ -59,6 +62,8 @@ class MainWindow(object):
         self.jpg_images = []
         self.p_queue = 0
         self.z_queue = 0
+        self.settings_counter = 0
+        self.old_page = "select"
 
         self.main_window.show_all()
 
@@ -68,13 +73,21 @@ class MainWindow(object):
         self.iconview = self.GtkBuilder.get_object("ui_iconview")
         self.liststore = self.GtkBuilder.get_object("ui_liststore")
         self.main_stack = self.GtkBuilder.get_object("ui_main_stack")
-        self.select_image = self.GtkBuilder.get_object("ui_selectimage")
+        self.select_image = self.GtkBuilder.get_object("ui_select_image")
         self.done_info = self.GtkBuilder.get_object("ui_done_info")
         self.dd_info_label = self.GtkBuilder.get_object("ui_dd_info_label")
+        self.settings_button = self.GtkBuilder.get_object("ui_settings_button")
+        self.settings_button_image = self.GtkBuilder.get_object("ui_settings_button_image")
+        self.jpeg_adjusment = self.GtkBuilder.get_object("ui_jpeg_adjusment")
 
         self.iconview.enable_model_drag_dest([Gtk.TargetEntry.new('text/uri-list', 0, 0)],
                                              Gdk.DragAction.DEFAULT | Gdk.DragAction.COPY)
         self.iconview.connect("drag-data-received", self.drag_data_received)
+
+    def user_settings(self):
+        self.UserSettings = UserSettings()
+        self.UserSettings.createDefaultConfig()
+        self.UserSettings.readConfig()
 
     def drag_data_received(self, treeview, context, posx, posy, selection, info, timestamp):
         if self.dd_info_label.get_visible():
@@ -202,6 +215,7 @@ class MainWindow(object):
 
             self.main_stack.set_visible_child_name("splash")
             self.select_image.set_sensitive(False)
+            self.settings_button.set_sensitive(False)
 
             for png_image in self.png_images:
                 command = ["/usr/bin/pngquant", "--quality=80-98", "--skip-if-larger", "--force", "--strip", "--speed",
@@ -222,12 +236,13 @@ class MainWindow(object):
         foo = foo.resize(foo.size, Image.ANTIALIAS)
         foo.save(os.path.join(self.output_dir,
                               os.path.basename(os.path.splitext(jpg_image)[0]) + "-optimized.jpg"),
-                 optimize=True, quality=80)
+                 optimize=True, quality=self.UserSettings.config_jpeg_quality)
 
         self.jpg_queue -= 1
 
         if self.z_queue <= 0 and self.jpg_queue <= 0:
             self.main_stack.set_visible_child_name("complete")
+            self.settings_button.set_sensitive(True)
             self.notify()
             for jpg_image in self.jpg_images:
                 optimized = os.path.join(self.output_dir,
@@ -248,6 +263,7 @@ class MainWindow(object):
     def on_ui_optimize_new_button_clicked(self, button):
         self.main_stack.set_visible_child_name("select")
         self.select_image.set_sensitive(True)
+        self.settings_button.set_sensitive(True)
         self.z_queue = 0
         self.p_queue = 0
         self.org_images = []
@@ -256,6 +272,23 @@ class MainWindow(object):
         self.liststore.clear()
         start, end = self.done_info.get_buffer().get_bounds()
         self.done_info.get_buffer().delete(start, end)
+
+    def on_ui_settings_button_clicked(self, button):
+        self.settings_counter += 1
+        if self.settings_counter % 2 == 1:
+            self.old_page = self.main_stack.get_visible_child_name()
+            self.main_stack.set_visible_child_name("settings")
+            self.settings_button_image.set_from_icon_name("user-home-symbolic", Gtk.IconSize.BUTTON)
+            self.jpeg_adjusment.set_value(self.UserSettings.config_jpeg_quality)
+        else:
+            self.main_stack.set_visible_child_name(self.old_page)
+            self.settings_button_image.set_from_icon_name("preferences-system-symbolic", Gtk.IconSize.BUTTON)
+
+    def on_ui_jpeg_adjusment_value_changed(self, adjusment):
+        user_jpeg_quality = self.UserSettings.config_jpeg_quality
+        if int(adjusment.get_value()) != user_jpeg_quality:
+            self.UserSettings.writeConfig(int(adjusment.get_value()))
+            self.user_settings()
 
     def start_p_process(self, params):
         pid, stdin, stdout, stderr = GLib.spawn_async(params, flags=GLib.SpawnFlags.DO_NOT_REAP_CHILD,
@@ -323,6 +356,7 @@ class MainWindow(object):
         self.z_queue -= 1
         if self.z_queue <= 0:
             self.main_stack.set_visible_child_name("complete")
+            self.settings_button.set_sensitive(True)
             self.notify()
             for png_image in self.png_images:
 

@@ -62,6 +62,12 @@
       </object>
     </child>
   </object>
+  <object class="GtkAdjustment" id="ui_jpeg_adjusment">
+    <property name="upper">99</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+    <signal name="value-changed" handler="on_ui_jpeg_adjusment_value_changed" swapped="no"/>
+  </object>
   <object class="GtkListStore" id="ui_liststore">
     <columns>
       <!-- column-name GdkPixbuf1 -->
@@ -332,6 +338,65 @@
             <property name="position">2</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkBox" id="settings_box">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="margin-start">5</property>
+            <property name="margin-end">5</property>
+            <property name="margin-top">5</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">5</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="spacing">13</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">JPEG image quality :</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkScale" id="ui_jpeg_scale">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="adjustment">ui_jpeg_adjusment</property>
+                    <property name="round-digits">1</property>
+                    <property name="digits">0</property>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="name">settings</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
       </object>
     </child>
     <child type="titlebar">
@@ -342,7 +407,7 @@
         <property name="subtitle" translatable="yes">Image Optimizer</property>
         <property name="show-close-button">True</property>
         <child>
-          <object class="GtkButton" id="ui_selectimage">
+          <object class="GtkButton" id="ui_select_image">
             <property name="label" translatable="yes">Select Image(s)</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
@@ -369,6 +434,24 @@
           <packing>
             <property name="pack-type">end</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="ui_settings_button">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="on_ui_settings_button_clicked" swapped="no"/>
+            <child>
+              <object class="GtkImage" id="ui_settings_button_image">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">preferences-system-symbolic</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
