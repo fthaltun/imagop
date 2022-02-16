@@ -16,7 +16,6 @@ from locale import gettext as _
 
 import gi
 from PIL import Image
-from PIL import UnidentifiedImageError
 
 gi.require_version("GLib", "2.0")
 gi.require_version("Gtk", "3.0")
@@ -84,9 +83,6 @@ class MainWindow(object):
             name = "{}".format(urllib.parse.unquote(image.split("file://")[1]))
             try:
                 img = Image.open(name)
-            except UnidentifiedImageError:
-                print("{} is not an image so skipped.".format(name))
-                continue
             except IsADirectoryError:
                 print("{} is a directory, so skipping for now.".format(name))
                 continue
@@ -153,9 +149,6 @@ class MainWindow(object):
 
             try:
                 img = Image.open(name)
-            except UnidentifiedImageError:
-                print("{} is not an image so skipped.".format(name))
-                continue
             except IsADirectoryError:
                 print("{} is a directory, so skipping for now.".format(name))
                 continue
