@@ -75,6 +75,7 @@ class MainWindow(object):
         self.main_stack = self.GtkBuilder.get_object("ui_main_stack")
         self.select_image = self.GtkBuilder.get_object("ui_select_image")
         self.done_info = self.GtkBuilder.get_object("ui_done_info")
+        self.done_listbox = self.GtkBuilder.get_object("ui_done_listbox")
         self.dd_info_label = self.GtkBuilder.get_object("ui_dd_info_label")
         self.settings_button = self.GtkBuilder.get_object("ui_settings_button")
         self.settings_button_image = self.GtkBuilder.get_object("ui_settings_button_image")
@@ -246,16 +247,26 @@ class MainWindow(object):
         self.jpg_queue -= 1
 
         if self.z_queue <= 0 and self.jpg_queue <= 0:
-            self.main_stack.set_visible_child_name("complete")
-            self.settings_button.set_sensitive(True)
+            GLib.idle_add(self.main_stack.set_visible_child_name, "complete")
+            GLib.idle_add(self.settings_button.set_sensitive, True)
             self.notify()
             for jpg_image in self.jpg_images:
                 optimized = os.path.join(self.output_dir,
                                          os.path.basename(os.path.splitext(jpg_image)[0]) + "-optimized.jpg")
-                self.done_info.get_buffer().insert(self.done_info.get_buffer().get_end_iter(),
-                                                   "{} | {} => {}\n".format(
-                                                       os.path.basename(optimized), self.get_size(jpg_image),
-                                                       self.get_size(optimized)))
+                thumb = Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(optimized, 100, 100))
+                info_label = Gtk.Label.new()
+                info_label.set_text("{} | {} => {}".format(os.path.basename(optimized), self.get_size(jpg_image), self.get_size(optimized)))
+                info_label.props.valign = Gtk.Align.CENTER
+                info_label.props.halign = Gtk.Align.CENTER
+                box = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 3)
+                box.set_margin_top(5)
+                box.set_margin_bottom(5)
+                box.set_margin_start(5)
+                box.set_margin_end(5)
+                box.pack_start(thumb, False, True, 0)
+                box.pack_start(info_label, False, True, 0)
+                self.done_listbox.add(box)
+            self.done_listbox.show_all()
 
     def on_ui_open_output_button_clicked(self, button):
         try:
@@ -275,8 +286,8 @@ class MainWindow(object):
         self.png_images = []
         self.jpg_images = []
         self.liststore.clear()
-        start, end = self.done_info.get_buffer().get_bounds()
-        self.done_info.get_buffer().delete(start, end)
+        for row in self.done_listbox:
+            self.done_listbox.remove(row)
 
     def on_ui_settings_button_clicked(self, button):
         self.settings_counter += 1
@@ -373,23 +384,46 @@ class MainWindow(object):
                 optimized = os.path.join(self.output_dir,
                                          os.path.basename(os.path.splitext(png_image)[0]) + "-optimized.png")
 
-                self.done_info.get_buffer().insert(self.done_info.get_buffer().get_end_iter(),
-                                                   "{} | {} => {}\n".format(
-                                                       os.path.basename(optimized), self.get_size(png_image),
-                                                       self.get_size(optimized)))
+                thumb = Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(optimized, 100, 100))
+                info_label = Gtk.Label.new()
+                info_label.set_text("{} | {} => {}".format(os.path.basename(optimized), self.get_size(png_image),
+                                                           self.get_size(optimized)))
+                info_label.props.valign = Gtk.Align.CENTER
+                info_label.props.halign = Gtk.Align.CENTER
+                box = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 3)
+                box.set_margin_top(5)
+                box.set_margin_bottom(5)
+                box.set_margin_start(5)
+                box.set_margin_end(5)
+                box.pack_start(thumb, False, True, 0)
+                box.pack_start(info_label, False, True, 0)
+                self.done_listbox.add(box)
+
 
                 pngquanted = os.path.join(self.output_dir,
                                           os.path.basename(os.path.splitext(png_image)[0]) + "-pngquant.png")
                 if os.path.isfile(pngquanted):
                     os.remove(pngquanted)
+            self.done_listbox.show_all()
 
             for jpg_image in self.jpg_images:
                 optimized = os.path.join(self.output_dir,
                                          os.path.basename(os.path.splitext(jpg_image)[0]) + "-optimized.jpg")
-                self.done_info.get_buffer().insert(self.done_info.get_buffer().get_end_iter(),
-                                                   "{} | {} => {}\n".format(
-                                                       os.path.basename(optimized), self.get_size(jpg_image),
-                                                       self.get_size(optimized)))
+                thumb = Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(optimized, 100, 100))
+                info_label = Gtk.Label.new()
+                info_label.set_text("{} | {} => {}".format(os.path.basename(optimized), self.get_size(jpg_image),
+                                                           self.get_size(optimized)))
+                info_label.props.valign = Gtk.Align.CENTER
+                info_label.props.halign = Gtk.Align.CENTER
+                box = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 3)
+                box.set_margin_top(5)
+                box.set_margin_bottom(5)
+                box.set_margin_start(5)
+                box.set_margin_end(5)
+                box.pack_start(thumb, False, True, 0)
+                box.pack_start(info_label, False, True, 0)
+                self.done_listbox.add(box)
+            self.done_listbox.show_all()
 
     def notify(self):
         if Notify.is_initted():

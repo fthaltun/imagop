@@ -268,15 +268,11 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkTextView" id="ui_done_info">
+                      <object class="GtkListBox" id="ui_done_listbox">
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="pixels-below-lines">5</property>
-                        <property name="editable">False</property>
-                        <property name="left-margin">3</property>
-                        <property name="right-margin">3</property>
-                        <property name="top-margin">3</property>
-                        <property name="bottom-margin">3</property>
+                        <property name="can-focus">False</property>
+                        <property name="selection-mode">none</property>
+                        <property name="activate-on-single-click">False</property>
                       </object>
                     </child>
                   </object>
