@@ -62,3 +62,5 @@ You can remove the pictures from the list in the interface by double-clicking th
 ![ImagOP](screenshots/imagop-2.png)
 
 ![ImagOP](screenshots/imagop-3.png)
+
+![ImagOP](screenshots/imagop-4.png)
