@@ -1,3 +1,12 @@
+imagop (0.1.0~beta6) unstable; urgency=medium
+
+  * Use listbox instead of textview on done page info
+  * Update done page ui
+  * Add exception for urllib.parse.unquote file path
+  * Update screenshots
+
+ -- Fatih Altun <fatih.altun@pardus.org.tr>  Tue, 22 Feb 2022 14:27:47 +0300
+
 imagop (0.1.0~beta5) unstable; urgency=medium
 
   * Add drag and drop info label to main stack
