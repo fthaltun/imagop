@@ -94,7 +94,11 @@ class MainWindow(object):
         if self.dd_info_label.get_visible():
             self.dd_info_label.set_visible(False)
         for image in selection.get_uris():
-            name = "{}".format(urllib.parse.unquote(image.split("file://")[1]))
+            try:
+                name = "{}".format(urllib.parse.unquote(image.split("file://")[1]))
+            except Exception as e:
+                print("{}".format(e))
+                continue
             try:
                 img = Image.open(name)
             except IsADirectoryError:
