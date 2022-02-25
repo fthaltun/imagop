@@ -86,6 +86,26 @@ class MainWindow(object):
                                              Gdk.DragAction.DEFAULT | Gdk.DragAction.COPY)
         self.iconview.connect("drag-data-received", self.drag_data_received)
 
+        self.menu = Gtk.Menu()
+        self.menu_item1 = Gtk.ImageMenuItem(label=_("Remove from list"))
+        self.menu_item1.set_image(Gtk.Image.new_from_icon_name("edit-delete-symbolic", Gtk.IconSize.BUTTON))
+        self.menu_item1.connect("activate", self.on_iconview_rcmenu_del_activated, self.iconview)
+        self.menu.append(self.menu_item1)
+        self.menu.show_all()
+
+    def on_ui_iconview_button_press_event(self, widget, event):
+        if event.type == Gdk.EventType.BUTTON_PRESS:
+            path = self.iconview.get_path_at_pos(event.x, event.y)
+            if path != None:
+                if event.button == 3:
+                    self.right_index = path
+                    self.menu.popup(None, None, None,None, event.button, event.time)
+
+    def on_iconview_rcmenu_del_activated(self, item, widget):
+        treeiter = self.liststore.get_iter(self.right_index)
+        self.liststore.remove(treeiter)
+        del self.org_images[self.right_index.get_indices()[0]]
+
     def user_settings(self):
         self.UserSettings = UserSettings()
         self.UserSettings.createDefaultConfig()

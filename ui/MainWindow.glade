@@ -127,6 +127,7 @@
                     <property name="margin">6</property>
                     <property name="model">ui_liststore</property>
                     <property name="item-width">100</property>
+                    <signal name="button-press-event" handler="on_ui_iconview_button_press_event" swapped="no"/>
                     <signal name="item-activated" handler="on_ui_iconview_item_activated" swapped="no"/>
                   </object>
                 </child>
