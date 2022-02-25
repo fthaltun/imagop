@@ -78,6 +78,7 @@ class MainWindow(object):
         self.done_listbox = self.GtkBuilder.get_object("ui_done_listbox")
         self.dd_info_label = self.GtkBuilder.get_object("ui_dd_info_label")
         self.settings_button = self.GtkBuilder.get_object("ui_settings_button")
+        self.defaults_button = self.GtkBuilder.get_object("ui_defaults_button")
         self.settings_button_image = self.GtkBuilder.get_object("ui_settings_button_image")
         self.jpeg_adjusment = self.GtkBuilder.get_object("ui_jpeg_adjusment")
 
@@ -300,6 +301,10 @@ class MainWindow(object):
             self.main_stack.set_visible_child_name("settings")
             self.settings_button_image.set_from_icon_name("user-home-symbolic", Gtk.IconSize.BUTTON)
             self.jpeg_adjusment.set_value(self.UserSettings.config_jpeg_quality)
+            if self.UserSettings.config_jpeg_quality != self.UserSettings.default_jpeg_quality:
+                self.defaults_button.set_sensitive(True)
+            else:
+                self.defaults_button.set_sensitive(False)
         else:
             self.main_stack.set_visible_child_name(self.old_page)
             self.settings_button_image.set_from_icon_name("preferences-system-symbolic", Gtk.IconSize.BUTTON)
@@ -309,6 +314,10 @@ class MainWindow(object):
         if int(adjusment.get_value()) != user_jpeg_quality:
             self.UserSettings.writeConfig(int(adjusment.get_value()))
             self.user_settings()
+        if self.UserSettings.config_jpeg_quality != self.UserSettings.default_jpeg_quality:
+            self.defaults_button.set_sensitive(True)
+        else:
+            self.defaults_button.set_sensitive(False)
 
     def on_ui_defaults_button_clicked(self, button):
         self.UserSettings.createDefaultConfig(force=True)
