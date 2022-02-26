@@ -98,6 +98,7 @@ class MainWindow(object):
             path = self.iconview.get_path_at_pos(event.x, event.y)
             if path != None:
                 if event.button == 3:
+                    self.iconview.select_path(path)
                     self.right_index = path
                     self.menu.popup(None, None, None,None, event.button, event.time)
 
@@ -105,6 +106,17 @@ class MainWindow(object):
         treeiter = self.liststore.get_iter(self.right_index)
         self.liststore.remove(treeiter)
         del self.org_images[self.right_index.get_indices()[0]]
+
+        for s in self.iconview.get_selected_items():
+            self.liststore.remove(self.liststore.get_iter(s))
+            del self.org_images[s.get_indices()[0]]
+
+    def on_ui_iconview_key_press_event(self, widget, event):
+
+        if event.keyval == Gdk.KEY_Delete:
+            for s in self.iconview.get_selected_items():
+                self.liststore.remove(self.liststore.get_iter(s))
+                del self.org_images[s.get_indices()[0]]
 
     def user_settings(self):
         self.UserSettings = UserSettings()
@@ -139,8 +151,7 @@ class MainWindow(object):
                     print("{} is not an image so skipped.".format(name))
 
     def on_ui_iconview_item_activated(self, icon_view, path):
-        treeiter = self.liststore.get_iter(path)
-        self.liststore.remove(treeiter)
+        self.liststore.remove(self.liststore.get_iter(path))
         del self.org_images[path.get_indices()[0]]
 
     def on_ui_about_button_clicked(self, button):

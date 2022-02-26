@@ -125,10 +125,12 @@
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="margin">6</property>
+                    <property name="selection-mode">multiple</property>
                     <property name="model">ui_liststore</property>
                     <property name="item-width">100</property>
                     <signal name="button-press-event" handler="on_ui_iconview_button_press_event" swapped="no"/>
                     <signal name="item-activated" handler="on_ui_iconview_item_activated" swapped="no"/>
+                    <signal name="key-press-event" handler="on_ui_iconview_key_press_event" swapped="no"/>
                   </object>
                 </child>
               </object>
