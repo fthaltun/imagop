@@ -1,3 +1,13 @@
+imagop (0.1.0~beta7) unstable; urgency=medium
+
+  * Add control to set_sensitive of restore defaults button
+  * Add right click menu for delete images from iconview
+  * Add del key shortcut and enable multi select on iconview
+  * Update pot file
+  * Update Turkish translations
+
+ -- Fatih Altun <fatih.altun@pardus.org.tr>  Wed, 02 Mar 2022 10:47:43 +0300
+
 imagop (0.1.0~beta6) unstable; urgency=medium
 
   * Use listbox instead of textview on done page info
