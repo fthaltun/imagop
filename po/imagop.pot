@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-16 16:12+0300\n"
+"POT-Creation-Date: 2022-03-02 10:45+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,74 +25,78 @@ msgstr ""
 msgid "<small>You can drag and drop images to the field below.</small>"
 msgstr ""
 
-#: ui/MainWindow.glade:142
+#: ui/MainWindow.glade:145
 msgid "Start Optimization"
 msgstr ""
 
-#: ui/MainWindow.glade:174
+#: ui/MainWindow.glade:177
 msgid "Optimization is in progress."
 msgstr ""
 
-#: ui/MainWindow.glade:198
+#: ui/MainWindow.glade:201
 msgid "Please wait ..."
 msgstr ""
 
-#: ui/MainWindow.glade:230
+#: ui/MainWindow.glade:235
 msgid "Operation completed."
 msgstr ""
 
-#: ui/MainWindow.glade:301
+#: ui/MainWindow.glade:303
 msgid "Show Optimized Files"
 msgstr ""
 
-#: ui/MainWindow.glade:318
+#: ui/MainWindow.glade:320
 msgid "Optimize New Images"
 msgstr ""
 
-#: ui/MainWindow.glade:365
+#: ui/MainWindow.glade:367
 msgid "JPEG image quality :"
 msgstr ""
 
-#: ui/MainWindow.glade:412
+#: ui/MainWindow.glade:414
 msgid "About"
 msgstr ""
 
-#: ui/MainWindow.glade:429
+#: ui/MainWindow.glade:431
 msgid "Restore Defaults"
 msgstr ""
 
-#: ui/MainWindow.glade:465
+#: ui/MainWindow.glade:467
 msgid "Image Optimizer"
 msgstr ""
 
-#: ui/MainWindow.glade:472 src/MainWindow.py:125
+#: ui/MainWindow.glade:474 src/MainWindow.py:162
 msgid "Select Image(s)"
 msgstr ""
 
-#: ui/MainWindow.glade:489
+#: ui/MainWindow.glade:491
 msgid "Settings"
 msgstr ""
 
-#: src/MainWindow.py:127
+#: src/MainWindow.py:90
+msgid "Remove from list"
+msgstr ""
+
+#: src/MainWindow.py:164
 msgid "Cancel"
 msgstr ""
 
-#: src/MainWindow.py:128
+#: src/MainWindow.py:165
 msgid "Open"
 msgstr ""
 
-#: src/MainWindow.py:132
+#: src/MainWindow.py:169
 msgid "All supported files"
 msgstr ""
 
-#: src/MainWindow.py:138
+#: src/MainWindow.py:175
 msgid "PNG files"
 msgstr ""
 
-#: src/MainWindow.py:142
+#: src/MainWindow.py:179
 msgid "JPG/JPEG files"
 msgstr ""
 
-#: src/MainWindow.py:398
+#: src/MainWindow.py:476
 msgid "Image optimization completed."
 msgstr ""
