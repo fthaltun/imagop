@@ -89,6 +89,7 @@ class MainWindow(object):
         self.ext_name_box = self.GtkBuilder.get_object("ui_ext_name_box")
         self.info_revealer = self.GtkBuilder.get_object("ui_info_revealer")
         self.info_label = self.GtkBuilder.get_object("ui_info_label")
+        self.settings_info_label = self.GtkBuilder.get_object("ui_settings_info_label")
 
         self.iconview.enable_model_drag_dest([Gtk.TargetEntry.new('text/uri-list', 0, 0)],
                                              Gdk.DragAction.DEFAULT | Gdk.DragAction.COPY)
@@ -418,6 +419,7 @@ class MainWindow(object):
     def on_ui_settings_button_clicked(self, button):
         self.settings_counter += 1
         if self.settings_counter % 2 == 1:
+            self.settings_info_label.set_text("")
             self.old_page = self.main_stack.get_visible_child_name()
             self.main_stack.set_visible_child_name("settings")
             self.settings_button_image.set_from_icon_name("user-home-symbolic", Gtk.IconSize.BUTTON)
@@ -447,6 +449,8 @@ class MainWindow(object):
             self.UserSettings.writeConfig(int(adjusment.get_value()), self.UserSettings.config_output_method,
                                           self.UserSettings.config_save_path, self.UserSettings.config_ext_name)
             self.user_settings()
+            self.settings_info_label.set_markup("<small><span weight='light'>{}</span></small>".format(
+                _("Changes saved.")))
         self.control_defaults()
 
     def on_ui_output_combobox_changed(self, combo_box):
@@ -455,6 +459,8 @@ class MainWindow(object):
             self.UserSettings.writeConfig(self.UserSettings.config_jpeg_quality, combo_box.get_active(),
                                           self.UserSettings.config_save_path, self.UserSettings.config_ext_name)
             self.user_settings()
+            self.settings_info_label.set_markup("<small><span weight='light'>{}</span></small>".format(
+                _("Changes saved.")))
             if self.UserSettings.config_output_method == 0:
                 self.ext_name.set_placeholder_text("")
                 self.save_path_box.set_visible(True)
@@ -476,6 +482,8 @@ class MainWindow(object):
             self.UserSettings.writeConfig(self.UserSettings.config_jpeg_quality, self.UserSettings.config_output_method,
                                           path, self.UserSettings.config_ext_name)
             self.user_settings()
+            self.settings_info_label.set_markup("<small><span weight='light'>{}</span></small>".format(
+                _("Changes saved.")))
         self.control_defaults()
 
     def on_ui_ext_name_changed(self, editable):
@@ -487,6 +495,8 @@ class MainWindow(object):
             self.UserSettings.writeConfig(self.UserSettings.config_jpeg_quality, self.UserSettings.config_output_method,
                                           self.UserSettings.config_save_path, self.ext_name.get_text())
             self.user_settings()
+            self.settings_info_label.set_markup("<small><span weight='light'>{}</span></small>".format(
+                _("Changes saved.")))
         self.control_defaults()
 
     def control_defaults(self):
@@ -508,6 +518,8 @@ class MainWindow(object):
         self.save_path_box.set_visible(True)
         self.ext_name_box.set_visible(True)
         self.defaults_button.set_sensitive(False)
+        self.settings_info_label.set_markup("<small><span weight='light'>{}</span></small>".format(
+            _("Changes saved.")))
 
     def on_ui_info_ok_button_clicked(self, button):
         self.info_revealer.set_reveal_child(False)
