@@ -571,7 +571,6 @@
                                 <property name="can-focus">True</property>
                                 <property name="halign">end</property>
                                 <property name="hexpand">True</property>
-                                <property name="text" translatable="yes">optimized</property>
                                 <signal name="changed" handler="on_ui_ext_name_changed" swapped="no"/>
                               </object>
                               <packing>
