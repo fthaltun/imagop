@@ -12,14 +12,15 @@ from configparser import ConfigParser
 
 class UserSettings(object):
     def __init__(self):
-        userhome = str(Path.home())
+        self.userhome = str(Path.home())
+        self.backup_folder = self.userhome + "/imagop-backup/"
 
         self.default_jpeg_quality = 80
         self.default_output_method = 0
-        self.default_save_path = userhome + "/imagop-output"
+        self.default_save_path = self.userhome + "/imagop-output"
         self.default_ext_name = "imagop"
 
-        self.configdir = userhome + "/.config/imagop/"
+        self.configdir = self.userhome + "/.config/imagop/"
         self.configfile = "settings.ini"
         self.config = ConfigParser(strict=False)
         self.config_jpeg_quality = self.default_jpeg_quality

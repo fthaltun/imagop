@@ -13,6 +13,7 @@ import subprocess
 import threading
 import urllib.parse
 import random
+from datetime import datetime
 from locale import gettext as _
 
 import gi
@@ -309,6 +310,9 @@ class MainWindow(object):
                 else:
                     save_name = png_image["name"]
 
+                if os.path.isfile(save_name):
+                    self.backup_image(save_name)
+
                 command = ["/usr/bin/pngquant", "--quality=80-98", "--skip-if-larger", "--force", "--strip", "--speed",
                            "1", "--output", save_name, png_image["name"]]
 
@@ -336,6 +340,9 @@ class MainWindow(object):
             save_name = jpg_image["name"]
         else:
             save_name = jpg_image["name"]
+
+        if os.path.isfile(save_name):
+            self.backup_image(save_name)
 
         foo.save(save_name, optimize=True, quality=self.UserSettings.config_jpeg_quality)
 
@@ -377,6 +384,17 @@ class MainWindow(object):
                 box.pack_start(info_label, False, True, 0)
                 self.done_listbox.add(box)
             self.done_listbox.show_all()
+
+    def backup_image(self, save_name):
+        # a little check to prevent overwrite existing image if user didn't choose to overwrite existing image
+        if self.UserSettings.config_output_method != 3:
+            try:
+                if not os.path.isdir(self.UserSettings.backup_folder):
+                    os.makedirs(self.UserSettings.backup_folder)
+                shutil.copy2(save_name, self.UserSettings.backup_folder + os.path.basename(save_name) + "-" +
+                             datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+            except Exception as e:
+                print("{}".format(e))
 
     def on_ui_open_output_button_clicked(self, button):
         # Save pictures to folder
