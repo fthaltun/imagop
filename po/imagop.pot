@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-02 10:45+0300\n"
+"POT-Creation-Date: 2022-03-13 18:46+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,82 +21,123 @@ msgstr ""
 msgid "Optimizes the sizes of images."
 msgstr ""
 
-#: ui/MainWindow.glade:107
+#: ui/MainWindow.glade:122
+msgid "OK"
+msgstr ""
+
+#: ui/MainWindow.glade:162
 msgid "<small>You can drag and drop images to the field below.</small>"
 msgstr ""
 
-#: ui/MainWindow.glade:145
+#: ui/MainWindow.glade:200
 msgid "Start Optimization"
 msgstr ""
 
-#: ui/MainWindow.glade:177
+#: ui/MainWindow.glade:232
 msgid "Optimization is in progress."
 msgstr ""
 
-#: ui/MainWindow.glade:201
+#: ui/MainWindow.glade:256
 msgid "Please wait ..."
 msgstr ""
 
-#: ui/MainWindow.glade:235
+#: ui/MainWindow.glade:290
 msgid "Operation completed."
 msgstr ""
 
-#: ui/MainWindow.glade:303
+#: ui/MainWindow.glade:358
 msgid "Show Optimized Files"
 msgstr ""
 
-#: ui/MainWindow.glade:320
+#: ui/MainWindow.glade:375
 msgid "Optimize New Images"
 msgstr ""
 
-#: ui/MainWindow.glade:367
+#: ui/MainWindow.glade:432
 msgid "JPEG image quality :"
 msgstr ""
 
-#: ui/MainWindow.glade:414
+#: ui/MainWindow.glade:460
+msgid "Image Quality Settings"
+msgstr ""
+
+#: ui/MainWindow.glade:493
+msgid "Save pictures to folder"
+msgstr ""
+
+#: ui/MainWindow.glade:494
+msgid "Save each image in its own directory"
+msgstr ""
+
+#: ui/MainWindow.glade:495
+msgid "Overwrite existing image"
+msgstr ""
+
+#: ui/MainWindow.glade:519
+msgid "Image output folder :"
+msgstr ""
+
+#: ui/MainWindow.glade:559
+msgid "Image extra name :"
+msgstr ""
+
+#: ui/MainWindow.glade:595
+msgid "Image Output Settings"
+msgstr ""
+
+#: ui/MainWindow.glade:614
 msgid "About"
 msgstr ""
 
-#: ui/MainWindow.glade:431
+#: ui/MainWindow.glade:631
 msgid "Restore Defaults"
 msgstr ""
 
-#: ui/MainWindow.glade:467
+#: ui/MainWindow.glade:699
 msgid "Image Optimizer"
 msgstr ""
 
-#: ui/MainWindow.glade:474 src/MainWindow.py:162
+#: ui/MainWindow.glade:706 src/MainWindow.py:171
 msgid "Select Image(s)"
 msgstr ""
 
-#: ui/MainWindow.glade:491
+#: ui/MainWindow.glade:723
 msgid "Settings"
 msgstr ""
 
-#: src/MainWindow.py:90
+#: src/MainWindow.py:99
 msgid "Remove from list"
 msgstr ""
 
-#: src/MainWindow.py:164
+#: src/MainWindow.py:173
 msgid "Cancel"
 msgstr ""
 
-#: src/MainWindow.py:165
+#: src/MainWindow.py:174
 msgid "Open"
 msgstr ""
 
-#: src/MainWindow.py:169
+#: src/MainWindow.py:178
 msgid "All supported files"
 msgstr ""
 
-#: src/MainWindow.py:175
+#: src/MainWindow.py:184
 msgid "PNG files"
 msgstr ""
 
-#: src/MainWindow.py:179
+#: src/MainWindow.py:188
 msgid "JPG/JPEG files"
 msgstr ""
 
-#: src/MainWindow.py:476
+#: src/MainWindow.py:258
+msgid "You don't have write permissions to the image output folder."
+msgstr ""
+
+#: src/MainWindow.py:453 src/MainWindow.py:463 src/MainWindow.py:486
+#: src/MainWindow.py:499 src/MainWindow.py:522
+msgid "Changes saved."
+msgstr ""
+
+#: src/MainWindow.py:679
 msgid "Image optimization completed."
 msgstr ""
