@@ -405,8 +405,8 @@ class MainWindow(object):
                 box.set_margin_end(5)
                 box.pack_start(thumb, False, True, 0)
                 box.pack_start(info_label, False, True, 0)
-                self.done_listbox.add(box)
-            self.done_listbox.show_all()
+                GLib.idle_add(self.done_listbox.add, box)
+            GLib.idle_add(self.done_listbox.show_all)
 
     def backup_image(self, save_name):
         # a little check to prevent overwrite existing image if user didn't choose to overwrite existing image
@@ -650,8 +650,8 @@ class MainWindow(object):
                       "<b>{} / {}</b> {}".format(self.completed_png, len(self.png_images), _("completed.")))
 
         if self.z_queue <= 0:
-            self.main_stack.set_visible_child_name("complete")
-            self.settings_button.set_sensitive(True)
+            GLib.idle_add(self.main_stack.set_visible_child_name, "complete")
+            GLib.idle_add(self.settings_button.set_sensitive, True)
             self.notify()
             for png_image in self.png_images:
 
@@ -683,9 +683,8 @@ class MainWindow(object):
                 box.set_margin_end(5)
                 box.pack_start(thumb, False, True, 0)
                 box.pack_start(info_label, False, True, 0)
-                self.done_listbox.add(box)
-
-            self.done_listbox.show_all()
+                GLib.idle_add(self.done_listbox.add, box)
+            GLib.idle_add(self.done_listbox.show_all)
 
             for jpg_image in self.jpg_images:
 
@@ -718,8 +717,8 @@ class MainWindow(object):
                 box.set_margin_end(5)
                 box.pack_start(thumb, False, True, 0)
                 box.pack_start(info_label, False, True, 0)
-                self.done_listbox.add(box)
-            self.done_listbox.show_all()
+                GLib.idle_add(self.done_listbox.add, box)
+            GLib.idle_add(self.done_listbox.show_all)
 
     def notify(self):
         if Notify.is_initted():
