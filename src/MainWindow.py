@@ -82,8 +82,10 @@ class MainWindow(object):
         self.settings_button_image = self.GtkBuilder.get_object("ui_settings_button_image")
         self.jpeg_adjusment = self.GtkBuilder.get_object("ui_jpeg_adjusment")
         self.save_path_button = self.GtkBuilder.get_object("ui_save_path_button")
-        self.overwrite_switch = self.GtkBuilder.get_object("ui_overwrite_switch")
+        self.output_combobox = self.GtkBuilder.get_object("ui_output_combobox")
+        self.ext_name = self.GtkBuilder.get_object("ui_ext_name")
         self.save_path_box = self.GtkBuilder.get_object("ui_save_path_box")
+        self.ext_name_box = self.GtkBuilder.get_object("ui_ext_name_box")
 
         self.iconview.enable_model_drag_dest([Gtk.TargetEntry.new('text/uri-list', 0, 0)],
                                              Gdk.DragAction.DEFAULT | Gdk.DragAction.COPY)
@@ -263,14 +265,23 @@ class MainWindow(object):
             self.settings_button.set_sensitive(False)
 
             for png_image in self.png_images:
-                if self.UserSettings.config_overwrite:
-                    save_path = png_image["name"]
+
+                if self.UserSettings.config_output_method == 0:  # Save pictures to folder
+                    save_name = os.path.join(self.UserSettings.config_save_path,
+                                             os.path.basename(os.path.splitext(png_image["name"])[0]) +
+                                             ("-" if self.UserSettings.config_ext_name != "" else "") +
+                                             self.UserSettings.config_ext_name + ".png")
+                elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
+                    save_name = os.path.join(os.path.dirname(png_image["name"]),
+                                             os.path.basename(os.path.splitext(png_image["name"])[0]) + "-" +
+                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name) + ".png")
+                elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
+                    save_name = png_image["name"]
                 else:
-                    save_path = os.path.join(self.UserSettings.config_save_path,
-                                                    os.path.basename(os.path.splitext(png_image["name"])[0]) + "-optimized.png")
+                    save_name = png_image["name"]
 
                 command = ["/usr/bin/pngquant", "--quality=80-98", "--skip-if-larger", "--force", "--strip", "--speed",
-                           "1", "--output", save_path, png_image["name"]]
+                           "1", "--output", save_name, png_image["name"]]
 
                 self.start_p_process(command)
 
@@ -282,11 +293,19 @@ class MainWindow(object):
     def optimize_jpg(self, jpg_image):
         foo = Image.open(jpg_image["name"])
         foo = foo.resize(foo.size, Image.ANTIALIAS)
-        if self.UserSettings.config_overwrite:
+        if self.UserSettings.config_output_method == 0:  # Save pictures to folder
+            save_name = os.path.join(self.UserSettings.config_save_path,
+                                     os.path.basename(os.path.splitext(jpg_image["name"])[0]) +
+                                     ("-" if self.UserSettings.config_ext_name != "" else "") +
+                                     self.UserSettings.config_ext_name + ".jpg")
+        elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
+            save_name = os.path.join(os.path.dirname(jpg_image["name"]),
+                                     os.path.basename(os.path.splitext(jpg_image["name"])[0]) + "-" +
+                                     (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name) + ".jpg")
+        elif self.UserSettings.config_output_method == 2: # Overwrite existing image
             save_name = jpg_image["name"]
         else:
-            save_name = os.path.join(self.UserSettings.config_save_path,
-                              os.path.basename(os.path.splitext(jpg_image["name"])[0]) + "-optimized.jpg")
+            save_name = jpg_image["name"]
 
         foo.save(save_name, optimize=True, quality=self.UserSettings.config_jpeg_quality)
 
@@ -297,11 +316,20 @@ class MainWindow(object):
             GLib.idle_add(self.settings_button.set_sensitive, True)
             self.notify()
             for jpg_img in self.jpg_images:
-                if self.UserSettings.config_overwrite:
+
+                if self.UserSettings.config_output_method == 0:  # Save pictures to folder
+                    optimized = os.path.join(self.UserSettings.config_save_path,
+                                             os.path.basename(os.path.splitext(jpg_img["name"])[0]) +
+                                             ("-" if self.UserSettings.config_ext_name != "" else "") +
+                                             self.UserSettings.config_ext_name + ".jpg")
+                elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
+                    optimized = os.path.join(os.path.dirname(jpg_img["name"]),
+                                             os.path.basename(os.path.splitext(jpg_img["name"])[0]) + "-" +
+                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name) + ".jpg")
+                elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
                     optimized = jpg_img["name"]
                 else:
-                    optimized = os.path.join(self.UserSettings.config_save_path,
-                                             os.path.basename(os.path.splitext(jpg_img["name"])[0]) + "-optimized.jpg")
+                    optimized = jpg_img["name"]
 
                 thumb = Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(optimized, 100, 100))
                 info_label = Gtk.Label.new()
@@ -319,7 +347,14 @@ class MainWindow(object):
             self.done_listbox.show_all()
 
     def on_ui_open_output_button_clicked(self, button):
-        if self.UserSettings.config_overwrite:
+        if self.UserSettings.config_output_method == 0:  # Save pictures to folder
+            try:
+                subprocess.check_call(["xdg-open", self.UserSettings.config_save_path])
+                return True
+            except subprocess.CalledProcessError:
+                print("error opening " + self.UserSettings.config_save_path)
+                return False
+        elif self.UserSettings.config_output_method == 1 or 2:  # Save each image in its own directory or Overwrite existing image
             folders = []
             folder = ""
             for jpg_image in self.jpg_images:
@@ -333,13 +368,6 @@ class MainWindow(object):
                     subprocess.check_call(["xdg-open", folder])
             except subprocess.CalledProcessError:
                 print("error opening " + folder)
-        else:
-            try:
-                subprocess.check_call(["xdg-open", self.UserSettings.config_save_path])
-                return True
-            except subprocess.CalledProcessError:
-                print("error opening " + self.UserSettings.config_save_path)
-                return False
 
     def on_ui_optimize_new_button_clicked(self, button):
         self.main_stack.set_visible_child_name("select")
@@ -362,17 +390,20 @@ class MainWindow(object):
             self.settings_button_image.set_from_icon_name("user-home-symbolic", Gtk.IconSize.BUTTON)
             self.jpeg_adjusment.set_value(self.UserSettings.config_jpeg_quality)
             self.save_path_button.set_uri(self.UserSettings.config_save_path)
-            self.overwrite_switch.set_state(self.UserSettings.config_overwrite)
-            if self.UserSettings.config_overwrite:
-                self.save_path_box.set_visible(False)
-            else:
+            self.output_combobox.set_active(self.UserSettings.config_output_method)
+            self.ext_name.set_text(self.UserSettings.config_ext_name)
+            if self.UserSettings.config_output_method == 0:
+                self.ext_name.set_placeholder_text("")
                 self.save_path_box.set_visible(True)
-            if self.UserSettings.config_jpeg_quality != self.UserSettings.default_jpeg_quality or \
-                    self.UserSettings.config_save_path != self.UserSettings.default_save_path or \
-                    self.UserSettings.default_overwrite != self.UserSettings.config_overwrite:
-                self.defaults_button.set_sensitive(True)
-            else:
-                self.defaults_button.set_sensitive(False)
+                self.ext_name_box.set_visible(True)
+            elif self.UserSettings.config_output_method == 1:
+                self.ext_name.set_placeholder_text(self.UserSettings.default_ext_name)
+                self.save_path_box.set_visible(False)
+                self.ext_name_box.set_visible(True)
+            elif self.UserSettings.config_output_method == 2:
+                self.save_path_box.set_visible(False)
+                self.ext_name_box.set_visible(False)
+            self.control_defaults()
         else:
             self.main_stack.set_visible_child_name(self.old_page)
             self.settings_button_image.set_from_icon_name("preferences-system-symbolic", Gtk.IconSize.BUTTON)
@@ -380,45 +411,57 @@ class MainWindow(object):
     def on_ui_jpeg_adjusment_value_changed(self, adjusment):
         user_jpeg_quality = self.UserSettings.config_jpeg_quality
         if int(adjusment.get_value()) != user_jpeg_quality:
-            self.UserSettings.writeConfig(int(adjusment.get_value()), self.UserSettings.config_save_path,
-                                          self.UserSettings.config_overwrite)
+            self.UserSettings.writeConfig(int(adjusment.get_value()), self.UserSettings.config_output_method,
+                                          self.UserSettings.config_save_path, self.UserSettings.config_ext_name)
             self.user_settings()
-        if self.UserSettings.config_jpeg_quality != self.UserSettings.default_jpeg_quality or \
-                self.UserSettings.config_save_path != self.UserSettings.default_save_path or \
-                self.UserSettings.default_overwrite != self.UserSettings.config_overwrite:
-            self.defaults_button.set_sensitive(True)
-        else:
-            self.defaults_button.set_sensitive(False)
+        self.control_defaults()
+
+    def on_ui_output_combobox_changed(self, combo_box):
+        user_output_method = self.UserSettings.config_output_method
+        if combo_box.get_active() != user_output_method:
+            self.UserSettings.writeConfig(self.UserSettings.config_jpeg_quality, combo_box.get_active(),
+                                          self.UserSettings.config_save_path, self.UserSettings.config_ext_name)
+            self.user_settings()
+            if self.UserSettings.config_output_method == 0:
+                self.ext_name.set_placeholder_text("")
+                self.save_path_box.set_visible(True)
+                self.ext_name_box.set_visible(True)
+            elif self.UserSettings.config_output_method == 1:
+                self.ext_name.set_placeholder_text(self.UserSettings.default_ext_name)
+                self.save_path_box.set_visible(False)
+                self.ext_name_box.set_visible(True)
+            elif self.UserSettings.config_output_method == 2:
+                self.save_path_box.set_visible(False)
+                self.ext_name_box.set_visible(False)
+        self.control_defaults()
 
     def on_ui_save_path_button_file_set(self, button):
         path = "{}".format(urllib.parse.unquote(button.get_uri().split("file://")[1]))
-        print(path)
         user_save_path = self.UserSettings.config_save_path
 
         if path != user_save_path:
-            self.UserSettings.writeConfig(self.UserSettings.config_jpeg_quality, path, self.UserSettings.config_overwrite)
+            self.UserSettings.writeConfig(self.UserSettings.config_jpeg_quality, self.UserSettings.config_output_method,
+                                          path, self.UserSettings.config_ext_name)
             self.user_settings()
+        self.control_defaults()
+
+
+    def on_ui_ext_name_changed(self, editable):
+        if self.UserSettings.config_output_method != 1:
+            self.ext_name.set_placeholder_text("")
+
+        user_ext_name = self.UserSettings.config_ext_name
+        if self.ext_name.get_text() != user_ext_name:
+            self.UserSettings.writeConfig(self.UserSettings.config_jpeg_quality, self.UserSettings.config_output_method,
+                                          self.UserSettings.config_save_path, self.ext_name.get_text())
+            self.user_settings()
+        self.control_defaults()
+
+    def control_defaults(self):
         if self.UserSettings.config_jpeg_quality != self.UserSettings.default_jpeg_quality or \
                 self.UserSettings.config_save_path != self.UserSettings.default_save_path or \
-                self.UserSettings.default_overwrite != self.UserSettings.config_overwrite:
-            self.defaults_button.set_sensitive(True)
-        else:
-            self.defaults_button.set_sensitive(False)
-
-    def on_ui_overwrite_switch_state_set(self, switch, state):
-        user_overwrite = self.UserSettings.config_overwrite
-
-        if state != user_overwrite:
-            self.UserSettings.writeConfig(self.UserSettings.config_jpeg_quality, self.UserSettings.config_save_path,
-                                          state)
-            self.user_settings()
-            if state:
-                self.save_path_box.set_visible(False)
-            else:
-                self.save_path_box.set_visible(True)
-        if self.UserSettings.config_jpeg_quality != self.UserSettings.default_jpeg_quality or \
-                self.UserSettings.config_save_path != self.UserSettings.default_save_path or \
-                self.UserSettings.default_overwrite != self.UserSettings.config_overwrite:
+                self.UserSettings.default_output_method != self.UserSettings.config_output_method or \
+                self.UserSettings.default_ext_name != self.UserSettings.config_ext_name:
             self.defaults_button.set_sensitive(True)
         else:
             self.defaults_button.set_sensitive(False)
@@ -427,9 +470,11 @@ class MainWindow(object):
         self.UserSettings.createDefaultConfig(force=True)
         self.user_settings()
         self.jpeg_adjusment.set_value(self.UserSettings.config_jpeg_quality)
+        self.output_combobox.set_active(self.UserSettings.config_output_method)
         self.save_path_button.set_uri(self.UserSettings.config_save_path)
-        self.overwrite_switch.set_state(self.UserSettings.config_overwrite)
+        self.ext_name.set_text(self.UserSettings.config_ext_name)
         self.save_path_box.set_visible(True)
+        self.ext_name_box.set_visible(True)
         self.defaults_button.set_sensitive(False)
 
     def start_p_process(self, params):
@@ -461,11 +506,24 @@ class MainWindow(object):
             print("pngquant processes done, starting zopflipng processes")
             for png_image in self.png_images:
 
-                if self.UserSettings.config_overwrite:
+                if self.UserSettings.config_output_method == 0:  # Save pictures to folder
+                    save_name = os.path.join(self.UserSettings.config_save_path,
+                                             os.path.basename(os.path.splitext(png_image["name"])[0]) +
+                                             ("-" if self.UserSettings.config_ext_name != "" else "") +
+                                             self.UserSettings.config_ext_name + ".png")
+                    if not os.path.isfile(save_name):
+                        shutil.copy2(png_image["name"], save_name)
+                elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
+                    save_name = os.path.join(os.path.dirname(png_image["name"]),
+                                             os.path.basename(os.path.splitext(png_image["name"])[0]) + "-" +
+                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name) + ".png")
+                    if not os.path.isfile(save_name):
+                        shutil.copy2(png_image["name"], save_name)
+                elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
                     save_name = png_image["name"]
                 else:
-                    save_name = os.path.join(self.UserSettings.config_save_path,
-                                             os.path.basename(os.path.splitext(png_image["name"])[0]) + "-optimized.png")
+                    save_name = png_image["name"]
+
                 command = ["/usr/bin/zopflipng", "-y", "--lossy_transparent", save_name, save_name]
                 self.start_z_process(command)
 
@@ -500,11 +558,19 @@ class MainWindow(object):
             self.notify()
             for png_image in self.png_images:
 
-                if self.UserSettings.config_overwrite:
+                if self.UserSettings.config_output_method == 0:  # Save pictures to folder
+                    optimized = os.path.join(self.UserSettings.config_save_path,
+                                             os.path.basename(os.path.splitext(png_image["name"])[0]) +
+                                             ("-" if self.UserSettings.config_ext_name != "" else "") +
+                                             self.UserSettings.config_ext_name + ".png")
+                elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
+                    optimized = os.path.join(os.path.dirname(png_image["name"]),
+                                             os.path.basename(os.path.splitext(png_image["name"])[0]) + "-" +
+                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name) + ".png")
+                elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
                     optimized = png_image["name"]
                 else:
-                    optimized = os.path.join(self.UserSettings.config_save_path,
-                                             os.path.basename(os.path.splitext(png_image["name"])[0]) + "-optimized.png")
+                    optimized = png_image["name"]
 
                 thumb = Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(optimized, 100, 100))
                 info_label = Gtk.Label.new()
@@ -525,11 +591,19 @@ class MainWindow(object):
 
             for jpg_image in self.jpg_images:
 
-                if self.UserSettings.config_overwrite:
+                if self.UserSettings.config_output_method == 0:  # Save pictures to folder
+                    optimized = os.path.join(self.UserSettings.config_save_path,
+                                             os.path.basename(os.path.splitext(jpg_image["name"])[0]) +
+                                             ("-" if self.UserSettings.config_ext_name != "" else "") +
+                                             self.UserSettings.config_ext_name + ".jpg")
+                elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
+                    optimized = os.path.join(os.path.dirname(jpg_image["name"]),
+                                             os.path.basename(os.path.splitext(jpg_image["name"])[0]) + "-" +
+                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name) + ".jpg")
+                elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
                     optimized = jpg_image["name"]
                 else:
-                    optimized = os.path.join(self.UserSettings.config_save_path,
-                                             os.path.basename(os.path.splitext(jpg_image["name"])[0]) + "-optimized.jpg")
+                    optimized = jpg_image["name"]
 
                 thumb = Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(optimized, 100, 100))
                 info_label = Gtk.Label.new()

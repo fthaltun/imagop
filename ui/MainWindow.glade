@@ -422,7 +422,6 @@
                   <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="halign">center</property>
                     <property name="margin-start">5</property>
                     <property name="margin-end">5</property>
                     <property name="margin-top">5</property>
@@ -430,46 +429,21 @@
                     <property name="orientation">vertical</property>
                     <property name="spacing">5</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkComboBoxText" id="ui_output_combobox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="halign">center</property>
-                        <property name="spacing">8</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
+                        <property name="has-entry">True</property>
+                        <property name="active-id">-1</property>
+                        <items>
+                          <item id="0" translatable="yes">Save pictures to folder</item>
+                          <item id="1" translatable="yes">Save each image in its own directory</item>
+                          <item id="2" translatable="yes">Overwrite existing image</item>
+                        </items>
+                        <signal name="changed" handler="on_ui_output_combobox_changed" swapped="no"/>
+                        <child internal-child="entry">
+                          <object class="GtkEntry">
                             <property name="can-focus">False</property>
-                            <property name="label" translatable="yes">Use output folder</property>
                           </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSwitch" id="ui_overwrite_switch">
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <signal name="state-set" handler="on_ui_overwrite_switch_state_set" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="label" translatable="yes">Use overwrite method</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">2</property>
-                          </packing>
                         </child>
                       </object>
                       <packing>
@@ -516,6 +490,46 @@
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="ui_ext_name_box">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="spacing">8</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">Image extra name :</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="ui_ext_name">
+                            <property name="width-request">300</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="halign">end</property>
+                            <property name="hexpand">True</property>
+                            <property name="text" translatable="yes">optimized</property>
+                            <signal name="changed" handler="on_ui_ext_name_changed" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>
