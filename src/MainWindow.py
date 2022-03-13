@@ -91,6 +91,10 @@ class MainWindow(object):
         self.info_revealer = self.GtkBuilder.get_object("ui_info_revealer")
         self.info_label = self.GtkBuilder.get_object("ui_info_label")
         self.settings_info_label = self.GtkBuilder.get_object("ui_settings_info_label")
+        self.jpg_progress_box = self.GtkBuilder.get_object("ui_jpg_progress_box")
+        self.png_progress_box = self.GtkBuilder.get_object("ui_png_progress_box")
+        self.jpg_progress_label = self.GtkBuilder.get_object("ui_jpg_progress_label")
+        self.png_progress_label = self.GtkBuilder.get_object("ui_png_progress_label")
 
         self.iconview.enable_model_drag_dest([Gtk.TargetEntry.new('text/uri-list', 0, 0)],
                                              Gdk.DragAction.DEFAULT | Gdk.DragAction.COPY)
@@ -289,9 +293,24 @@ class MainWindow(object):
             self.z_queue = self.p_queue
             self.jpg_queue = len(self.jpg_images)
 
+            self.completed_jpg = 0
+            self.completed_png = 0
+
             self.main_stack.set_visible_child_name("splash")
             self.select_image.set_sensitive(False)
             self.settings_button.set_sensitive(False)
+
+            if self.jpg_images:
+                GLib.idle_add(self.jpg_progress_box.set_visible, True)
+            else:
+                GLib.idle_add(self.jpg_progress_box.set_visible, False)
+            if self.png_images:
+                GLib.idle_add(self.png_progress_box.set_visible, True)
+            else:
+                GLib.idle_add(self.png_progress_box.set_visible, False)
+
+            GLib.idle_add(self.jpg_progress_label.set_markup, "<b>{} / {}</b> {}".format(self.completed_jpg, len(self.jpg_images), _("completed.")))
+            GLib.idle_add(self.png_progress_label.set_markup, "<b>{} / {}</b> {}".format(self.completed_png, len(self.png_images), _("completed.")))
 
             for png_image in self.png_images:
 
@@ -347,6 +366,10 @@ class MainWindow(object):
         foo.save(save_name, optimize=True, quality=self.UserSettings.config_jpeg_quality)
 
         self.jpg_queue -= 1
+
+        self.completed_jpg += 1
+        GLib.idle_add(self.jpg_progress_label.set_markup,
+                      "<b>{} / {}</b> {}".format(self.completed_jpg, len(self.jpg_images), _("completed.")))
 
         if self.z_queue <= 0 and self.jpg_queue <= 0:
             GLib.idle_add(self.main_stack.set_visible_child_name, "complete")
@@ -430,6 +453,10 @@ class MainWindow(object):
         self.org_images = []
         self.png_images = []
         self.jpg_images = []
+        self.completed_jpg = 0
+        self.completed_png = 0
+        self.jpg_progress_label.set_text("")
+        self.png_progress_label.set_text("")
         self.liststore.clear()
         for row in self.done_listbox:
             self.done_listbox.remove(row)
@@ -618,6 +645,10 @@ class MainWindow(object):
 
     def on_z_process_exit(self, pid, status):
         self.z_queue -= 1
+        self.completed_png += 1
+        GLib.idle_add(self.png_progress_label.set_markup,
+                      "<b>{} / {}</b> {}".format(self.completed_png, len(self.png_images), _("completed.")))
+
         if self.z_queue <= 0:
             self.main_stack.set_visible_child_name("complete")
             self.settings_button.set_sensitive(True)
