@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import threading
 import urllib.parse
+import random
 from locale import gettext as _
 
 import gi
@@ -86,6 +87,8 @@ class MainWindow(object):
         self.ext_name = self.GtkBuilder.get_object("ui_ext_name")
         self.save_path_box = self.GtkBuilder.get_object("ui_save_path_box")
         self.ext_name_box = self.GtkBuilder.get_object("ui_ext_name_box")
+        self.info_revealer = self.GtkBuilder.get_object("ui_info_revealer")
+        self.info_label = self.GtkBuilder.get_object("ui_info_label")
 
         self.iconview.enable_model_drag_dest([Gtk.TargetEntry.new('text/uri-list', 0, 0)],
                                              Gdk.DragAction.DEFAULT | Gdk.DragAction.COPY)
@@ -232,6 +235,28 @@ class MainWindow(object):
         except Exception as e:
             print("{}".format(e))
             return False
+        try:
+            if self.UserSettings.config_output_method == 0:
+                test_filename = os.path.join(self.UserSettings.config_save_path, ".imagop" + str(random.randint(0,1000)))
+                open(test_filename, "a").close()
+                os.remove(test_filename)
+            elif self.UserSettings.config_output_method == 1 or self.UserSettings.config_output_method == 2:
+                folders = []
+                for org_image in self.org_images:
+                    if os.path.dirname(org_image) not in folders:
+                        folders.append(os.path.dirname(org_image))
+                for folder in folders:
+                    test_filename = os.path.join(folder, ".imagop" + str(random.randint(0, 1000)))
+                    open(test_filename, "a").close()
+                    os.remove(test_filename)
+        except PermissionError as e:
+            self.info_revealer.set_reveal_child(True)
+            print("{}".format(e))
+            self.info_label.set_markup("<small>{}</small>".format(_("You do not have write permissions to the image output folder.")))
+            return False
+        except Exception as e:
+            print("{}".format(e))
+            return False
         return True
 
     def get_size(self, filepath):
@@ -248,7 +273,7 @@ class MainWindow(object):
         return size
 
     def on_ui_optimize_button_clicked(self, button):
-        if self.control_output_directory() and self.org_images:
+        if self.org_images and self.control_output_directory():
 
             for org_image in self.org_images:
                 if Image.open(org_image).format == "PNG":
@@ -347,14 +372,16 @@ class MainWindow(object):
             self.done_listbox.show_all()
 
     def on_ui_open_output_button_clicked(self, button):
-        if self.UserSettings.config_output_method == 0:  # Save pictures to folder
+        # Save pictures to folder
+        if self.UserSettings.config_output_method == 0:
             try:
                 subprocess.check_call(["xdg-open", self.UserSettings.config_save_path])
                 return True
             except subprocess.CalledProcessError:
                 print("error opening " + self.UserSettings.config_save_path)
                 return False
-        elif self.UserSettings.config_output_method == 1 or 2:  # Save each image in its own directory or Overwrite existing image
+        # Save each image in its own directory or Overwrite existing image
+        elif self.UserSettings.config_output_method == 1 or self.UserSettings.config_output_method == 2:
             folders = []
             folder = ""
             for jpg_image in self.jpg_images:
@@ -476,6 +503,9 @@ class MainWindow(object):
         self.save_path_box.set_visible(True)
         self.ext_name_box.set_visible(True)
         self.defaults_button.set_sensitive(False)
+
+    def on_ui_info_ok_button_clicked(self, button):
+        self.info_revealer.set_reveal_child(False)
 
     def start_p_process(self, params):
         pid, stdin, stdout, stderr = GLib.spawn_async(params, flags=GLib.SpawnFlags.DO_NOT_REAP_CHILD,
