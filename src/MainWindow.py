@@ -24,7 +24,7 @@ gi.require_version("Notify", "0.7")
 gi.require_version("GdkPixbuf", "2.0")
 from gi.repository import Gtk, GObject, GLib, GdkPixbuf, Gdk, Notify
 
-from UserSettings import  UserSettings
+from UserSettings import UserSettings
 
 locale.bindtextdomain('imagop', '/usr/share/locale')
 locale.textdomain('imagop')
@@ -108,7 +108,7 @@ class MainWindow(object):
                 if event.button == 3:
                     self.iconview.select_path(path)
                     self.right_index = path
-                    self.menu.popup(None, None, None,None, event.button, event.time)
+                    self.menu.popup(None, None, None, None, event.button, event.time)
 
     def on_iconview_rcmenu_del_activated(self, item, widget):
         treeiter = self.liststore.get_iter(self.right_index)
@@ -203,7 +203,7 @@ class MainWindow(object):
 
         if self.main_stack.get_visible_child_name() == "settings":
             self.main_stack.set_visible_child_name("select")
-            self.settings_counter +=1
+            self.settings_counter += 1
             self.settings_button_image.set_from_icon_name("preferences-system-symbolic", Gtk.IconSize.BUTTON)
 
     def image_to_ui(self, filenames):
@@ -237,7 +237,8 @@ class MainWindow(object):
             return False
         try:
             if self.UserSettings.config_output_method == 0:
-                test_filename = os.path.join(self.UserSettings.config_save_path, ".imagop" + str(random.randint(0,1000)))
+                test_filename = os.path.join(self.UserSettings.config_save_path,
+                                             ".imagop" + str(random.randint(0, 1000)))
                 open(test_filename, "a").close()
                 os.remove(test_filename)
             elif self.UserSettings.config_output_method == 1 or self.UserSettings.config_output_method == 2:
@@ -252,7 +253,8 @@ class MainWindow(object):
         except PermissionError as e:
             self.info_revealer.set_reveal_child(True)
             print("{}".format(e))
-            self.info_label.set_markup("<small>{}</small>".format(_("You do not have write permissions to the image output folder.")))
+            self.info_label.set_markup(
+                "<small>{}</small>".format(_("You don't have write permissions to the image output folder.")))
             return False
         except Exception as e:
             print("{}".format(e))
@@ -299,7 +301,8 @@ class MainWindow(object):
                 elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
                     save_name = os.path.join(os.path.dirname(png_image["name"]),
                                              os.path.basename(os.path.splitext(png_image["name"])[0]) + "-" +
-                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name) + ".png")
+                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
+                                             + ".png")
                 elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
                     save_name = png_image["name"]
                 else:
@@ -326,8 +329,9 @@ class MainWindow(object):
         elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
             save_name = os.path.join(os.path.dirname(jpg_image["name"]),
                                      os.path.basename(os.path.splitext(jpg_image["name"])[0]) + "-" +
-                                     (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name) + ".jpg")
-        elif self.UserSettings.config_output_method == 2: # Overwrite existing image
+                                     (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
+                                     + ".jpg")
+        elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
             save_name = jpg_image["name"]
         else:
             save_name = jpg_image["name"]
@@ -350,7 +354,8 @@ class MainWindow(object):
                 elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
                     optimized = os.path.join(os.path.dirname(jpg_img["name"]),
                                              os.path.basename(os.path.splitext(jpg_img["name"])[0]) + "-" +
-                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name) + ".jpg")
+                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
+                                             + ".jpg")
                 elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
                     optimized = jpg_img["name"]
                 else:
@@ -358,7 +363,8 @@ class MainWindow(object):
 
                 thumb = Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(optimized, 100, 100))
                 info_label = Gtk.Label.new()
-                info_label.set_text("{} | {} => {}".format(os.path.basename(optimized), jpg_img["size"], self.get_size(optimized)))
+                info_label.set_text(
+                    "{} | {} => {}".format(os.path.basename(optimized), jpg_img["size"], self.get_size(optimized)))
                 info_label.props.valign = Gtk.Align.CENTER
                 info_label.props.halign = Gtk.Align.CENTER
                 box = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 3)
@@ -472,7 +478,6 @@ class MainWindow(object):
             self.user_settings()
         self.control_defaults()
 
-
     def on_ui_ext_name_changed(self, editable):
         if self.UserSettings.config_output_method != 1:
             self.ext_name.set_placeholder_text("")
@@ -546,7 +551,8 @@ class MainWindow(object):
                 elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
                     save_name = os.path.join(os.path.dirname(png_image["name"]),
                                              os.path.basename(os.path.splitext(png_image["name"])[0]) + "-" +
-                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name) + ".png")
+                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
+                                             + ".png")
                     if not os.path.isfile(save_name):
                         shutil.copy2(png_image["name"], save_name)
                 elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
@@ -596,7 +602,8 @@ class MainWindow(object):
                 elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
                     optimized = os.path.join(os.path.dirname(png_image["name"]),
                                              os.path.basename(os.path.splitext(png_image["name"])[0]) + "-" +
-                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name) + ".png")
+                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
+                                             + ".png")
                 elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
                     optimized = png_image["name"]
                 else:
@@ -629,7 +636,8 @@ class MainWindow(object):
                 elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
                     optimized = os.path.join(os.path.dirname(jpg_image["name"]),
                                              os.path.basename(os.path.splitext(jpg_image["name"])[0]) + "-" +
-                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name) + ".jpg")
+                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
+                                             + ".jpg")
                 elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
                     optimized = jpg_image["name"]
                 else:
@@ -637,7 +645,8 @@ class MainWindow(object):
 
                 thumb = Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(optimized, 100, 100))
                 info_label = Gtk.Label.new()
-                info_label.set_text("{} | {} => {}".format(os.path.basename(optimized), jpg_image["size"], self.get_size(optimized)))
+                info_label.set_text(
+                    "{} | {} => {}".format(os.path.basename(optimized), jpg_image["size"], self.get_size(optimized)))
 
                 info_label.props.valign = Gtk.Align.CENTER
                 info_label.props.halign = Gtk.Align.CENTER
