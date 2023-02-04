@@ -351,6 +351,7 @@ class MainWindow(object):
             box1.pack_start(freed_label, False, True, 0)
 
             box = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 0)
+            box.name = image
             box.set_margin_top(5)
             box.set_margin_bottom(5)
             box.set_margin_start(5)
@@ -470,6 +471,15 @@ class MainWindow(object):
             self.notify()
 
             self.add_to_done_listbox(self.jpg_images)
+
+    def on_ui_done_listbox_row_activated(self, listbox, row):
+        row.set_can_focus(False)
+        try:
+            subprocess.check_call(["xdg-open", row.get_child().name["name"]])
+            return True
+        except subprocess.CalledProcessError:
+            print("error opening " + row.get_child().name["name"])
+            return False
 
     def backup_image(self, save_name):
         # a little check to prevent overwrite existing image if user didn't choose to overwrite existing image
