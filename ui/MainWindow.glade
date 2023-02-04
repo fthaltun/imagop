@@ -362,54 +362,9 @@
               <object class="GtkBox" id="complete_box">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="margin-top">13</property>
                 <property name="margin-bottom">13</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">13</property>
-                <child>
-                  <object class="GtkBox">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                    <property name="spacing">5</property>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="valign">center</property>
-                        <property name="label" translatable="yes">Operation completed.</property>
-                        <attributes>
-                          <attribute name="weight" value="bold"/>
-                        </attributes>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="valign">center</property>
-                        <property name="icon-name">emblem-ok-symbolic</property>
-                        <property name="icon_size">5</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
                 <child>
                   <object class="GtkScrolledWindow">
                     <property name="visible">True</property>
@@ -433,6 +388,17 @@
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="ui_total_freed_label">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -440,17 +406,17 @@
                   <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="halign">center</property>
                     <property name="valign">center</property>
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">13</property>
+                    <property name="margin-start">55</property>
+                    <property name="margin-end">55</property>
+                    <property name="spacing">55</property>
+                    <property name="homogeneous">True</property>
                     <child>
                       <object class="GtkButton" id="ui_open_output_button">
-                        <property name="label" translatable="yes">Show Optimized Files</property>
+                        <property name="label" translatable="yes">Show Files</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
-                        <property name="halign">center</property>
                         <property name="valign">center</property>
                         <property name="image">image3</property>
                         <signal name="clicked" handler="on_ui_open_output_button_clicked" swapped="no"/>
@@ -463,11 +429,10 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="ui_optimize_new_button">
-                        <property name="label" translatable="yes">Optimize New Images</property>
+                        <property name="label" translatable="yes">New Optimization</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
-                        <property name="halign">center</property>
                         <property name="valign">center</property>
                         <property name="image">image4</property>
                         <signal name="clicked" handler="on_ui_optimize_new_button_clicked" swapped="no"/>
@@ -482,7 +447,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">3</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </object>

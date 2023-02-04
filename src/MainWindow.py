@@ -23,7 +23,7 @@ gi.require_version("GLib", "2.0")
 gi.require_version("Gtk", "3.0")
 gi.require_version("Notify", "0.7")
 gi.require_version("GdkPixbuf", "2.0")
-from gi.repository import Gtk, GObject, GLib, GdkPixbuf, Gdk, Notify
+from gi.repository import Gtk, GObject, GLib, GdkPixbuf, Gdk, Notify, Pango
 
 from UserSettings import UserSettings
 
@@ -66,6 +66,7 @@ class MainWindow(object):
         self.z_queue = 0
         self.settings_counter = 0
         self.old_page = "select"
+        self.total_freed = 0
 
         self.main_window.show_all()
 
@@ -95,6 +96,7 @@ class MainWindow(object):
         self.png_progress_box = self.GtkBuilder.get_object("ui_png_progress_box")
         self.jpg_progress_label = self.GtkBuilder.get_object("ui_jpg_progress_label")
         self.png_progress_label = self.GtkBuilder.get_object("ui_png_progress_label")
+        self.total_freed_label = self.GtkBuilder.get_object("ui_total_freed_label")
 
         self.iconview.enable_model_drag_dest([Gtk.TargetEntry.new('text/uri-list', 0, 0)],
                                              Gdk.DragAction.DEFAULT | Gdk.DragAction.COPY)
@@ -271,23 +273,114 @@ class MainWindow(object):
         size = 0
         if os.path.isfile(filepath):
             size = os.stat(filepath).st_size
-            if type(size) is int:
-                size = size / 1024
-                if size > 1024:
-                    size = "{:.2f} MiB".format(float(size / 1024))
-                else:
-                    size = "{:.2f} KiB".format(float(size))
-            return size
         return size
 
+    def beauty_size(self, byte):
+        size = 0
+        if isinstance(byte, int):
+            size = byte / 1024
+            if size > 1024:
+                size = "{:.2f} MiB".format(float(size / 1024))
+            else:
+                size = "{:.2f} KiB".format(float(size))
+        return size
+
+    def add_to_done_listbox(self, images):
+        for image in images:
+
+            if self.UserSettings.config_output_method == 0:  # Save pictures to folder
+                optimized = os.path.join(self.UserSettings.config_save_path,
+                                         os.path.basename(os.path.splitext(image["name"])[0]) +
+                                         ("-" if self.UserSettings.config_ext_name != "" else "") +
+                                         self.UserSettings.config_ext_name + image["ext"])
+            elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
+                optimized = os.path.join(os.path.dirname(image["name"]),
+                                         os.path.basename(os.path.splitext(image["name"])[0]) + "-" +
+                                         (
+                                             self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
+                                         + image["ext"])
+            elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
+                optimized = image["name"]
+            else:
+                optimized = image["name"]
+
+            thumb = Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_scale(optimized, 100, 100, False))
+
+            img_name = Gtk.Label.new()
+            img_name.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
+            img_name.set_justify(Gtk.Justification.LEFT)
+            img_name.set_xalign(0)
+            img_name.set_text("{}".format(os.path.basename(optimized)))
+
+            old_size = Gtk.Label.new()
+            old_size.set_justify(Gtk.Justification.LEFT)
+            old_size.set_markup("{}".format(self.beauty_size(image["size"])))
+
+            new_size = Gtk.Label.new()
+            new_size.set_justify(Gtk.Justification.LEFT)
+            if self.get_size(optimized) < image["size"]:
+                new_size.set_markup("<span color='green'>{}</span>".format(self.beauty_size(self.get_size(optimized))))
+            else:
+                new_size.set_markup("<span color='red'>{}</span>".format(self.beauty_size(self.get_size(optimized))))
+
+            icon = Gtk.Image.new_from_icon_name("go-next-symbolic", Gtk.IconSize.BUTTON)
+
+            box_size = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 0)
+            box_size.set_spacing(8)
+            box_size.pack_start(old_size, False, True, 0)
+            box_size.pack_start(icon, False, True, 0)
+            box_size.pack_start(new_size, False, True, 0)
+
+            freed_label = Gtk.Label.new()
+            freed_label.set_justify(Gtk.Justification.LEFT)
+            freed_label.set_xalign(0)
+            diff = image["size"] - self.get_size(optimized)
+            if diff > 0:
+                freed_label.set_markup("<span color='green'>{}</span> {}".format(self.beauty_size(diff), _("freed")))
+            else:
+                freed_label.set_markup(
+                    "<span color='red'>{}</span> {}".format(self.beauty_size(abs(diff)), _("increased")))
+
+            self.total_freed += diff
+
+            box1 = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
+            box1.props.valign = Gtk.Align.CENTER
+            box1.set_spacing(8)
+            box1.pack_start(img_name, False, True, 0)
+            box1.pack_start(box_size, False, True, 0)
+            box1.pack_start(freed_label, False, True, 0)
+
+            box = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 0)
+            box.set_margin_top(5)
+            box.set_margin_bottom(5)
+            box.set_margin_start(5)
+            box.set_margin_end(5)
+            box.pack_start(thumb, False, True, 0)
+            box.pack_start(box1, False, True, 13)
+
+            GLib.idle_add(self.done_listbox.add, box)
+            GLib.idle_add(self.done_listbox.add, Gtk.Separator.new(Gtk.Orientation.HORIZONTAL))
+        GLib.idle_add(self.done_listbox.show_all)
+        if self.total_freed > 0:
+            GLib.idle_add(self.total_freed_label.set_markup,
+                          "<b>{} <span color='green'>{}</span> {}</b>".format(_("Totally"),
+                                                                              self.beauty_size(self.total_freed),
+                                                                              _("disk space freed")))
+        else:
+            GLib.idle_add(self.total_freed_label.set_markup,
+                          "<b>{} <span color='red'>{}</span> {}</b>".format(_("Totally"),
+                                                                            self.beauty_size(abs(self.total_freed)),
+                                                                            _("disk space increased")))
+
     def on_ui_optimize_button_clicked(self, button):
+        self.total_freed = 0
         if self.org_images and self.control_output_directory():
 
             for org_image in self.org_images:
                 if Image.open(org_image).format == "PNG":
-                    self.png_images.append({"name": org_image, "size": self.get_size(org_image)})
+                    self.png_images.append({"name": org_image, "size": self.get_size(org_image), "ext": ".png"})
                 elif Image.open(org_image).format == "JPEG":
-                    self.jpg_images.append({"name": org_image, "size": self.get_size(org_image)})
+                    self.jpg_images.append({"name": org_image, "size": self.get_size(org_image), "ext": ".jpg"})
 
             self.p_queue = len(self.png_images)
             self.z_queue = self.p_queue
@@ -318,12 +411,12 @@ class MainWindow(object):
                     save_name = os.path.join(self.UserSettings.config_save_path,
                                              os.path.basename(os.path.splitext(png_image["name"])[0]) +
                                              ("-" if self.UserSettings.config_ext_name != "" else "") +
-                                             self.UserSettings.config_ext_name + ".png")
+                                             self.UserSettings.config_ext_name + png_image["ext"])
                 elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
                     save_name = os.path.join(os.path.dirname(png_image["name"]),
                                              os.path.basename(os.path.splitext(png_image["name"])[0]) + "-" +
                                              (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
-                                             + ".png")
+                                             + png_image["ext"])
                 elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
                     save_name = png_image["name"]
                 else:
@@ -349,12 +442,12 @@ class MainWindow(object):
             save_name = os.path.join(self.UserSettings.config_save_path,
                                      os.path.basename(os.path.splitext(jpg_image["name"])[0]) +
                                      ("-" if self.UserSettings.config_ext_name != "" else "") +
-                                     self.UserSettings.config_ext_name + ".jpg")
+                                     self.UserSettings.config_ext_name + jpg_image["ext"])
         elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
             save_name = os.path.join(os.path.dirname(jpg_image["name"]),
                                      os.path.basename(os.path.splitext(jpg_image["name"])[0]) + "-" +
                                      (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
-                                     + ".jpg")
+                                     + jpg_image["ext"])
         elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
             save_name = jpg_image["name"]
         else:
@@ -375,38 +468,8 @@ class MainWindow(object):
             GLib.idle_add(self.main_stack.set_visible_child_name, "complete")
             GLib.idle_add(self.settings_button.set_sensitive, True)
             self.notify()
-            for jpg_img in self.jpg_images:
 
-                if self.UserSettings.config_output_method == 0:  # Save pictures to folder
-                    optimized = os.path.join(self.UserSettings.config_save_path,
-                                             os.path.basename(os.path.splitext(jpg_img["name"])[0]) +
-                                             ("-" if self.UserSettings.config_ext_name != "" else "") +
-                                             self.UserSettings.config_ext_name + ".jpg")
-                elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
-                    optimized = os.path.join(os.path.dirname(jpg_img["name"]),
-                                             os.path.basename(os.path.splitext(jpg_img["name"])[0]) + "-" +
-                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
-                                             + ".jpg")
-                elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
-                    optimized = jpg_img["name"]
-                else:
-                    optimized = jpg_img["name"]
-
-                thumb = Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(optimized, 100, 100))
-                info_label = Gtk.Label.new()
-                info_label.set_text(
-                    "{} | {} => {}".format(os.path.basename(optimized), jpg_img["size"], self.get_size(optimized)))
-                info_label.props.valign = Gtk.Align.CENTER
-                info_label.props.halign = Gtk.Align.CENTER
-                box = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 3)
-                box.set_margin_top(5)
-                box.set_margin_bottom(5)
-                box.set_margin_start(5)
-                box.set_margin_end(5)
-                box.pack_start(thumb, False, True, 0)
-                box.pack_start(info_label, False, True, 0)
-                GLib.idle_add(self.done_listbox.add, box)
-            GLib.idle_add(self.done_listbox.show_all)
+            self.add_to_done_listbox(self.jpg_images)
 
     def backup_image(self, save_name):
         # a little check to prevent overwrite existing image if user didn't choose to overwrite existing image
@@ -602,14 +665,14 @@ class MainWindow(object):
                     save_name = os.path.join(self.UserSettings.config_save_path,
                                              os.path.basename(os.path.splitext(png_image["name"])[0]) +
                                              ("-" if self.UserSettings.config_ext_name != "" else "") +
-                                             self.UserSettings.config_ext_name + ".png")
+                                             self.UserSettings.config_ext_name + png_image["ext"])
                     if not os.path.isfile(save_name):
                         shutil.copy2(png_image["name"], save_name)
                 elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
                     save_name = os.path.join(os.path.dirname(png_image["name"]),
                                              os.path.basename(os.path.splitext(png_image["name"])[0]) + "-" +
                                              (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
-                                             + ".png")
+                                             + png_image["ext"])
                     if not os.path.isfile(save_name):
                         shutil.copy2(png_image["name"], save_name)
                 elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
@@ -653,72 +716,9 @@ class MainWindow(object):
             GLib.idle_add(self.main_stack.set_visible_child_name, "complete")
             GLib.idle_add(self.settings_button.set_sensitive, True)
             self.notify()
-            for png_image in self.png_images:
 
-                if self.UserSettings.config_output_method == 0:  # Save pictures to folder
-                    optimized = os.path.join(self.UserSettings.config_save_path,
-                                             os.path.basename(os.path.splitext(png_image["name"])[0]) +
-                                             ("-" if self.UserSettings.config_ext_name != "" else "") +
-                                             self.UserSettings.config_ext_name + ".png")
-                elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
-                    optimized = os.path.join(os.path.dirname(png_image["name"]),
-                                             os.path.basename(os.path.splitext(png_image["name"])[0]) + "-" +
-                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
-                                             + ".png")
-                elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
-                    optimized = png_image["name"]
-                else:
-                    optimized = png_image["name"]
-
-                thumb = Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(optimized, 100, 100))
-                info_label = Gtk.Label.new()
-                info_label.set_text("{} | {} => {}".format(os.path.basename(optimized), png_image["size"],
-                                                           self.get_size(optimized)))
-                info_label.props.valign = Gtk.Align.CENTER
-                info_label.props.halign = Gtk.Align.CENTER
-                box = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 3)
-                box.set_margin_top(5)
-                box.set_margin_bottom(5)
-                box.set_margin_start(5)
-                box.set_margin_end(5)
-                box.pack_start(thumb, False, True, 0)
-                box.pack_start(info_label, False, True, 0)
-                GLib.idle_add(self.done_listbox.add, box)
-            GLib.idle_add(self.done_listbox.show_all)
-
-            for jpg_image in self.jpg_images:
-
-                if self.UserSettings.config_output_method == 0:  # Save pictures to folder
-                    optimized = os.path.join(self.UserSettings.config_save_path,
-                                             os.path.basename(os.path.splitext(jpg_image["name"])[0]) +
-                                             ("-" if self.UserSettings.config_ext_name != "" else "") +
-                                             self.UserSettings.config_ext_name + ".jpg")
-                elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
-                    optimized = os.path.join(os.path.dirname(jpg_image["name"]),
-                                             os.path.basename(os.path.splitext(jpg_image["name"])[0]) + "-" +
-                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
-                                             + ".jpg")
-                elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
-                    optimized = jpg_image["name"]
-                else:
-                    optimized = jpg_image["name"]
-
-                thumb = Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(optimized, 100, 100))
-                info_label = Gtk.Label.new()
-                info_label.set_text(
-                    "{} | {} => {}".format(os.path.basename(optimized), jpg_image["size"], self.get_size(optimized)))
-
-                info_label.props.valign = Gtk.Align.CENTER
-                info_label.props.halign = Gtk.Align.CENTER
-                box = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 3)
-                box.set_margin_top(5)
-                box.set_margin_bottom(5)
-                box.set_margin_start(5)
-                box.set_margin_end(5)
-                box.pack_start(thumb, False, True, 0)
-                box.pack_start(info_label, False, True, 0)
-                GLib.idle_add(self.done_listbox.add, box)
-            GLib.idle_add(self.done_listbox.show_all)
+            self.add_to_done_listbox(self.png_images)
+            self.add_to_done_listbox(self.jpg_images)
 
     def notify(self):
         if Notify.is_initted():
