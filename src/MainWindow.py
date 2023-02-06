@@ -366,12 +366,12 @@ class MainWindow(object):
             GLib.idle_add(self.total_freed_label.set_markup,
                           "<b>{} <span color='green'>{}</span> {}</b>".format(_("Totally"),
                                                                               self.beauty_size(self.total_freed),
-                                                                              _("disk space freed")))
+                                                                              _("freed")))
         else:
             GLib.idle_add(self.total_freed_label.set_markup,
                           "<b>{} <span color='red'>{}</span> {}</b>".format(_("Totally"),
                                                                             self.beauty_size(abs(self.total_freed)),
-                                                                            _("disk space increased")))
+                                                                            _("increased")))
 
     def on_ui_optimize_button_clicked(self, button):
         self.total_freed = 0
