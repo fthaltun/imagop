@@ -34,7 +34,7 @@ data_files = [
     ("/usr/bin", ["imagop"]),
     ("/usr/share/applications", ["com.github.fthaltun.imagop.desktop"]),
     ("/usr/share/imagop/ui", ["ui/MainWindow.glade"]),
-    ("/usr/share/imagop/src", ["src/main.py", "src/MainWindow.py", "src/UserSettings.py", "src/__version__"]),
+    ("/usr/share/imagop/src", ["src/Main.py", "src/MainWindow.py", "src/UserSettings.py", "src/__version__"]),
     ("/usr/share/icons/hicolor/scalable/apps/", ["ui/imagop.svg"])
 ] + create_mo_files()
 
