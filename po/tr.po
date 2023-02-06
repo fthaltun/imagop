@@ -2,21 +2,21 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# Fatih Altun <fatih.altun@pardus.org.tr>, 2022.
+# Fatih Altun <fatih.altun@pardus.org.tr>, 2022-2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-14 00:42+0300\n"
-"PO-Revision-Date: 2022-03-14 00:43+0300\n"
+"POT-Creation-Date: 2023-02-07 01:34+0300\n"
+"PO-Revision-Date: 2023-02-07 01:47+0300\n"
 "Last-Translator: Fatih Altun <fatih.altun@pardus.org.tr>\n"
 "Language-Team: Turkish <dev@pardus.org.tr>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Plural-Forms: nplurals=1; plural=0\n"
 "X-Generator: Gtranslator 3.38.0\n"
 
 #: ui/MainWindow.glade:36
@@ -35,127 +35,141 @@ msgstr "<small>Resimleri aşağıdaki alana sürükleyip bırakabilirsiniz.</sma
 msgid "Start Optimization"
 msgstr "Optimizasyonu Başlat"
 
-#: ui/MainWindow.glade:232
+#: ui/MainWindow.glade:233
 msgid "Optimization is in progress."
 msgstr "Optimizasyon devam ediyor."
 
-#: ui/MainWindow.glade:256
+#: ui/MainWindow.glade:257
 msgid "JPG images :"
 msgstr "JPG resimler :"
 
-#: ui/MainWindow.glade:295
+#: ui/MainWindow.glade:296
 msgid "PNG images :"
 msgstr "PNG resimler :"
 
-#: ui/MainWindow.glade:347
+#: ui/MainWindow.glade:348
 msgid "Please wait ..."
 msgstr "Lütfen bekleyin ..."
 
-#: ui/MainWindow.glade:381
-msgid "Operation completed."
-msgstr "İşlem tamamlandı."
+#: ui/MainWindow.glade:417
+msgid "Show Files"
+msgstr "Dosyaları Göster"
 
-#: ui/MainWindow.glade:449
-msgid "Show Optimized Files"
-msgstr "Optimize Edilmiş Dosyaları Göster"
+#: ui/MainWindow.glade:433
+msgid "New Optimization"
+msgstr "Yeni Optimizasyon"
 
-#: ui/MainWindow.glade:466
-msgid "Optimize New Images"
-msgstr "Yeni Resimleri Optimize Edin"
-
-#: ui/MainWindow.glade:523
+#: ui/MainWindow.glade:489
 msgid "JPEG image quality :"
 msgstr "JPEG görüntü kalitesi:"
 
-#: ui/MainWindow.glade:551
+#: ui/MainWindow.glade:517
 msgid "Image Quality Settings"
 msgstr "Resim Kalitesi Ayarları"
 
-#: ui/MainWindow.glade:584
+#: ui/MainWindow.glade:550
 msgid "Save pictures to folder"
 msgstr "Resimleri klasöre kaydet"
 
-#: ui/MainWindow.glade:585
+#: ui/MainWindow.glade:551
 msgid "Save each image in its own directory"
 msgstr "Her resmi kendi klasörüne kaydet"
 
-#: ui/MainWindow.glade:586
+#: ui/MainWindow.glade:552
 msgid "Overwrite existing image"
 msgstr "Mevcut resmin üzerine yaz"
 
-#: ui/MainWindow.glade:610
+#: ui/MainWindow.glade:576
 msgid "Image output folder :"
 msgstr "Resim çıktı klasörü :"
 
-#: ui/MainWindow.glade:650
+#: ui/MainWindow.glade:616
 msgid "Image extra name :"
 msgstr "Resim ek adı :"
 
-#: ui/MainWindow.glade:686
+#: ui/MainWindow.glade:652
 msgid "Image Output Settings"
 msgstr "Resim Çıktı Ayarları"
 
-#: ui/MainWindow.glade:705
+#: ui/MainWindow.glade:671
 msgid "About"
 msgstr "Hakkında"
 
-#: ui/MainWindow.glade:722
+#: ui/MainWindow.glade:688
 msgid "Restore Defaults"
 msgstr "Varsayılanları Geri Yükle"
 
-#: ui/MainWindow.glade:790
+#: ui/MainWindow.glade:756
 msgid "Image Optimizer"
 msgstr "Resim Optimize Edici"
 
-#: ui/MainWindow.glade:797 src/MainWindow.py:176
+#: ui/MainWindow.glade:763 src/MainWindow.py:182
 msgid "Select Image(s)"
 msgstr "Resim(leri) Seçin"
 
-#: ui/MainWindow.glade:814
+#: ui/MainWindow.glade:780
 msgid "Settings"
 msgstr "Ayarlar"
 
-#: src/MainWindow.py:104
+#: src/MainWindow.py:107
 msgid "Remove from list"
 msgstr "Listeden kaldır"
 
-#: src/MainWindow.py:178
+#: src/MainWindow.py:184
 msgid "Cancel"
 msgstr "İptal"
 
-#: src/MainWindow.py:179
+#: src/MainWindow.py:185
 msgid "Open"
 msgstr "Aç"
 
-#: src/MainWindow.py:183
+#: src/MainWindow.py:189
 msgid "All supported files"
 msgstr "Tüm desteklenen dosyalar"
 
-#: src/MainWindow.py:189
+#: src/MainWindow.py:195
 msgid "PNG files"
 msgstr "PNG dosyaları"
 
-#: src/MainWindow.py:193
+#: src/MainWindow.py:199
 msgid "JPG/JPEG files"
 msgstr "JPG/JPEG dosyaları"
 
-#: src/MainWindow.py:263
+#: src/MainWindow.py:270
 msgid "You don't have write permissions to the image output folder."
 msgstr "Resim çıktı klasörüne yazma izniniz yok."
 
-#: src/MainWindow.py:312 src/MainWindow.py:313 src/MainWindow.py:372
-#: src/MainWindow.py:650
+#: src/MainWindow.py:344 src/MainWindow.py:374
+msgid "freed"
+msgstr "yer kazanıldı"
+
+#: src/MainWindow.py:347 src/MainWindow.py:379
+msgid "increased"
+msgstr "yer arttı"
+
+#: src/MainWindow.py:372 src/MainWindow.py:377
+msgid "Totally"
+msgstr "Toplam"
+
+#: src/MainWindow.py:411 src/MainWindow.py:412 src/MainWindow.py:471
+#: src/MainWindow.py:729
 msgid "completed."
 msgstr "tamamlandı."
 
-#: src/MainWindow.py:498 src/MainWindow.py:508 src/MainWindow.py:531
-#: src/MainWindow.py:544 src/MainWindow.py:567
+#: src/MainWindow.py:577 src/MainWindow.py:587 src/MainWindow.py:610
+#: src/MainWindow.py:623 src/MainWindow.py:646
 msgid "Changes saved."
 msgstr "Değişiklikler kaydedildi."
 
-#: src/MainWindow.py:728
+#: src/MainWindow.py:743
 msgid "Image optimization completed."
 msgstr "Resim optimizasyonu tamamlandı."
+
+#~ msgid "Operation completed."
+#~ msgstr "İşlem tamamlandı."
+
+#~ msgid "Optimize New Images"
+#~ msgstr "Yeni Resimleri Optimize Edin"
 
 #, fuzzy
 #~ msgid "optimized"
