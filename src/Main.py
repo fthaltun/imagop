@@ -24,6 +24,5 @@ class Application(Gtk.Application):
         self.window = MainWindow(self)
 
 
-if __name__ == "__main__":
-    app = Application()
-    app.run()
+app = Application()
+app.run()
