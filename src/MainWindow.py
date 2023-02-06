@@ -80,6 +80,7 @@ class MainWindow(object):
         self.done_info = self.GtkBuilder.get_object("ui_done_info")
         self.done_listbox = self.GtkBuilder.get_object("ui_done_listbox")
         self.dd_info_label = self.GtkBuilder.get_object("ui_dd_info_label")
+        self.optimize_button = self.GtkBuilder.get_object("ui_optimize_button")
         self.settings_button = self.GtkBuilder.get_object("ui_settings_button")
         self.defaults_button = self.GtkBuilder.get_object("ui_defaults_button")
         self.settings_button_image = self.GtkBuilder.get_object("ui_settings_button_image")
@@ -127,6 +128,8 @@ class MainWindow(object):
             self.liststore.remove(self.liststore.get_iter(s))
             del self.org_images[s.get_indices()[0]]
 
+        self.optimize_button.set_sensitive(len(self.org_images) > 0)
+
     def on_ui_iconview_key_press_event(self, widget, event):
 
         if event.keyval == Gdk.KEY_Delete:
@@ -163,6 +166,7 @@ class MainWindow(object):
                     icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
                     self.liststore.append([icon, os.path.basename(name)])
                     self.org_images.append(name)
+                    self.optimize_button.set_sensitive(True)
                 except gi.repository.GLib.Error:
                     print("{} is not an image so skipped.".format(name))
 
@@ -233,6 +237,7 @@ class MainWindow(object):
                         icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
                         self.liststore.append([icon, os.path.basename(name)])
                         self.org_images.append(name)
+                        self.optimize_button.set_sensitive(True)
                     except gi.repository.GLib.Error:
                         print("{} is not an image so skipped".format(name))
 
@@ -521,6 +526,7 @@ class MainWindow(object):
         self.main_stack.set_visible_child_name("select")
         self.select_image.set_sensitive(True)
         self.settings_button.set_sensitive(True)
+        self.optimize_button.set_sensitive(False)
         self.z_queue = 0
         self.p_queue = 0
         self.org_images = []
