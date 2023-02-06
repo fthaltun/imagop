@@ -1,8 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from setuptools import setup, find_packages
+import os, subprocess
 
-from setuptools import setup, find_packages, os
+def create_mo_files():
+    podir = "po"
+    mo = []
+    for po in os.listdir(podir):
+        if po.endswith(".po"):
+            os.makedirs("{}/{}/LC_MESSAGES".format(podir, po.split(".po")[0]), exist_ok=True)
+            mo_file = "{}/{}/LC_MESSAGES/{}".format(podir, po.split(".po")[0], "imagop.mo")
+            msgfmt_cmd = 'msgfmt {} -o {}'.format(podir + "/" + po, mo_file)
+            subprocess.call(msgfmt_cmd, shell=True)
+            mo.append(("/usr/share/locale/" + po.split(".po")[0] + "/LC_MESSAGES",
+                       ["po/" + po.split(".po")[0] + "/LC_MESSAGES/imagop.mo"]))
+    return mo
+
 
 changelog = "debian/changelog"
 if os.path.exists(changelog):
@@ -11,7 +25,7 @@ if os.path.exists(changelog):
         version = head.split("(")[1].split(")")[0]
     except:
         print("debian/changelog format is wrong for get version")
-        version = ""
+        version = "0.0.0"
     f = open("src/__version__", "w")
     f.write(version)
     f.close()
@@ -21,9 +35,8 @@ data_files = [
     ("/usr/share/applications", ["com.github.fthaltun.imagop.desktop"]),
     ("/usr/share/imagop/ui", ["ui/MainWindow.glade"]),
     ("/usr/share/imagop/src", ["src/main.py", "src/MainWindow.py", "src/UserSettings.py", "src/__version__"]),
-    ("/usr/share/locale/tr/LC_MESSAGES", ["po/tr/LC_MESSAGES/imagop.mo"]),
     ("/usr/share/icons/hicolor/scalable/apps/", ["ui/imagop.svg"])
-]
+] + create_mo_files()
 
 setup(
     name="ImagOP",
