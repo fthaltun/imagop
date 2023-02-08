@@ -24,7 +24,7 @@ You can set your picture output preferences and quality from the settings.
 * Clone the repository :
     * ```git clone https://github.com/fthaltun/imagop.git ~/imagop```
 * Run application :
-    * ```python3 ~/imagop/src/main.py```
+    * ```python3 ~/imagop/src/Main.py```
 
 ## Build deb package
 
