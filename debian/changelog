@@ -1,3 +1,20 @@
+imagop (0.2.0) unstable; urgency=medium
+
+  * Add freed up info and Update completed listbox ui
+  * Add xdg-open to clicked image on completed page
+  * Fix typo
+  * Add dynamically sensitive to optimize button
+  * Update translate generation as dynamic
+  * Update pot file
+  * Update Turkish translations
+  * Fix typo
+  * Update bin script and main
+  * Fix typo
+  * Update screenshot
+  * Update README
+
+ -- Fatih Altun <fatih.altun@pardus.org.tr>  Wed, 08 Feb 2023 14:16:32 +0300
+
 imagop (0.1.0) unstable; urgency=medium
 
   * Add image output settings with overwrite or folder selection
