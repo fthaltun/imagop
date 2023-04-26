@@ -46,11 +46,11 @@ gbp buildpackage --git-export-dir=/tmp/build/imagop -us -uc
 
 ### **Samples**
 
-> #### Original (png) (5.7 MiB)
+> #### Original (png) (2.8 MiB)
 >
 > ![Original 1](screenshots/sample-original-1.png)
 
-> #### Optimized (png) (2.4 MiB)
+> #### Optimized (png) (835.1 KiB)
 >
 > ![Optimized 1](screenshots/sample-optimized-1.png)
 ---
