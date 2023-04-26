@@ -12,59 +12,65 @@ You can set your picture output preferences and quality from the settings.
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/imagop.svg)](https://repology.org/project/imagop/versions)
 
-## Dependencies:
+### **Dependencies**
 
-* This application is developed based on Python3 and GTK+ 3. Dependencies:
-   - ```gir1.2-glib-2.0 gir1.2-gtk-3.0 gir1.2-notify-0.7 python3-pil pngquant zopfli```
+This application is developed based on Python3 and GTK+ 3. Dependencies:
+```bash
+gir1.2-glib-2.0 gir1.2-gtk-3.0 gir1.2-notify-0.7 python3-pil pngquant zopfli
+```
 
-## Run Application from Source
+### **Run Application from Source**
 
-* Install dependencies :
-    * ```gir1.2-glib-2.0 gir1.2-gtk-3.0 gir1.2-notify-0.7 python3-pil pngquant zopfli```
-* Clone the repository :
-    * ```git clone https://github.com/fthaltun/imagop.git ~/imagop```
-* Run application :
-    * ```python3 ~/imagop/src/Main.py```
+Install dependencies
+```bash
+gir1.2-glib-2.0 gir1.2-gtk-3.0 gir1.2-notify-0.7 python3-pil pngquant zopfli
+```
 
-## Build deb package
+Clone the repository
+```bash
+git clone https://github.com/fthaltun/imagop.git ~/imagop
+```
 
-* `sudo apt install devscripts git-buildpackage`
-* `sudo mk-build-deps -ir`
-* `gbp buildpackage --git-export-dir=/tmp/build/imagop -us -uc`
+Run application
+```bash
+python3 ~/imagop/src/Main.py
+```
 
-## Samples
+### **Build deb package**
 
-> #### Original (png) (22.5 KiB)
+```bash
+sudo apt install devscripts git-buildpackage
+sudo mk-build-deps -ir
+gbp buildpackage --git-export-dir=/tmp/build/imagop -us -uc
+```
+
+### **Samples**
+
+> #### Original (png) (5.7 MiB)
 >
 > ![Original 1](screenshots/sample-original-1.png)
 
-> #### Optimized (png) (5.8 KiB)
+> #### Optimized (png) (2.4 MiB)
 >
 > ![Optimized 1](screenshots/sample-optimized-1.png)
 ---
-> #### Original (png) (551.6 KiB)
->
-> ![Original 2](screenshots/sample-original-2.png)
 
-> #### Optimized (png) (191.5 KiB)
->
-> ![Optimized 2](screenshots/sample-optimized-2.png)
-
----
-> #### Original (jpg) (273.2 KiB)
+> #### Original (jpg) (2.5 MiB)
 >
 > ![Original 2](screenshots/sample-original-jpg-1.jpg)
 
-> #### Optimized (jpg) (51.7 KiB)
+> #### Optimized (jpg) (1.2 MiB)
 >
 > ![Optimized 2](screenshots/sample-optimized-jpg-1.jpg)
 
-## Screenshots
+### **Screenshots**
 
-![ImagOP](screenshots/imagop-1.png)
+![ImagOP 1](screenshots/imagop-1.png)
 
-![ImagOP](screenshots/imagop-2.png)
+![ImagOP 2](screenshots/imagop-2.png)
 
-![ImagOP](screenshots/imagop-3.png)
+![ImagOP 3](screenshots/imagop-3.png)
 
-![ImagOP](screenshots/imagop-4.png)
+![ImagOP 4](screenshots/imagop-4.png)
+
+![ImagOP 5](screenshots/imagop-5.png)
