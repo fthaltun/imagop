@@ -2,11 +2,12 @@
 Name=ImagOP
 Comment=Optimizes the sizes of images
 Comment[tr]=Resimlerin boyutlarını optimize eder
-Exec=imagop
+Exec=imagop %F
 Icon=imagop
 Terminal=false
 Type=Application
 Categories=GTK;Graphics;
+MimeType=image/jpeg;image/jpg;image/png;
 StartupNotify=true
 Keywords=image;optimizer;imagop;compress;press
 Keywords[tr]=resim;optimize;imagop;sıkıştır

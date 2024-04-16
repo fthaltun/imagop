@@ -32,7 +32,7 @@ locale.textdomain('imagop')
 
 
 class MainWindow(object):
-    def __init__(self, application):
+    def __init__(self, application, files):
         self.Application = application
 
         self.main_window_ui_filename = os.path.dirname(os.path.abspath(__file__)) + "/../ui/MainWindow.glade"
@@ -67,6 +67,9 @@ class MainWindow(object):
         self.settings_counter = 0
         self.old_page = "select"
         self.total_freed = 0
+
+        if files:
+            self.open_files(files)
 
         self.main_window.show_all()
 
@@ -141,6 +144,27 @@ class MainWindow(object):
         self.UserSettings = UserSettings()
         self.UserSettings.createDefaultConfig()
         self.UserSettings.readConfig()
+
+    def open_files(self, files):
+        for file in files:
+            name = file.get_path()
+            if os.path.exists(name):
+                try:
+                    img = Image.open(name)
+                except IsADirectoryError:
+                    print("{} is a directory, so skipping for now.".format(name))
+                    continue
+                except Exception as e:
+                    print("{}".format(e))
+                    continue
+                if (img.format == "JPEG" or img.format == "PNG") and name not in self.org_images:
+                    try:
+                        icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
+                        self.liststore.append([icon, os.path.basename(name)])
+                        self.org_images.append(name)
+                        self.optimize_button.set_sensitive(True)
+                    except gi.repository.GLib.Error:
+                        print("{} is not an image so skipped.".format(name))
 
     def drag_data_received(self, treeview, context, posx, posy, selection, info, timestamp):
         if self.dd_info_label.get_visible():
