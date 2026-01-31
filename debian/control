@@ -15,6 +15,7 @@ Depends: ${misc:Depends},
          gir1.2-notify-0.7,
          pngquant,
          python3-pil,
-         zopfli
+         zopfli,
+         webp
 Description: Image Optimizer
  Optimizes the sizes of images.

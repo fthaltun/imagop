@@ -62,8 +62,10 @@ class MainWindow(object):
         self.org_images = []
         self.png_images = []
         self.jpg_images = []
+        self.webp_images = []
         self.p_queue = 0
         self.z_queue = 0
+        self.webp_queue = 0
         self.settings_counter = 0
         self.old_page = "select"
         self.total_freed = 0
@@ -98,8 +100,10 @@ class MainWindow(object):
         self.settings_info_label = self.GtkBuilder.get_object("ui_settings_info_label")
         self.jpg_progress_box = self.GtkBuilder.get_object("ui_jpg_progress_box")
         self.png_progress_box = self.GtkBuilder.get_object("ui_png_progress_box")
+        self.webp_progress_box = self.GtkBuilder.get_object("ui_webp_progress_box")
         self.jpg_progress_label = self.GtkBuilder.get_object("ui_jpg_progress_label")
         self.png_progress_label = self.GtkBuilder.get_object("ui_png_progress_label")
+        self.webp_progress_label = self.GtkBuilder.get_object("ui_webp_progress_label")
         self.total_freed_label = self.GtkBuilder.get_object("ui_total_freed_label")
 
         self.iconview.enable_model_drag_dest([Gtk.TargetEntry.new('text/uri-list', 0, 0)],
@@ -149,22 +153,7 @@ class MainWindow(object):
         for file in files:
             name = file.get_path()
             if os.path.exists(name):
-                try:
-                    img = Image.open(name)
-                except IsADirectoryError:
-                    print("{} is a directory, so skipping for now.".format(name))
-                    continue
-                except Exception as e:
-                    print("{}".format(e))
-                    continue
-                if (img.format == "JPEG" or img.format == "PNG") and name not in self.org_images:
-                    try:
-                        icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
-                        self.liststore.append([icon, os.path.basename(name)])
-                        self.org_images.append(name)
-                        self.optimize_button.set_sensitive(True)
-                    except gi.repository.GLib.Error:
-                        print("{} is not an image so skipped.".format(name))
+                self.image_to_ui_n_list(name)
 
     def drag_data_received(self, treeview, context, posx, posy, selection, info, timestamp):
         if self.dd_info_label.get_visible():
@@ -175,24 +164,25 @@ class MainWindow(object):
             except Exception as e:
                 print("{}".format(e))
                 continue
+            self.image_to_ui_n_list(name)
+
+    def image_to_ui_n_list(self, name):
+        try:
+            img = Image.open(name)
+        except IsADirectoryError:
+            print("{} is a directory, so skipping for now.".format(name))
+            return
+        except Exception as e:
+            print("{}".format(e))
+            return
+        if (img.format in ["JPEG", "PNG", "WEBP"]) and name not in self.org_images:
             try:
-                img = Image.open(name)
-            except IsADirectoryError:
-                print("{} is a directory, so skipping for now.".format(name))
-                continue
-            except Exception as e:
-                print("{}".format(e))
-                continue
-
-            if (img.format == "JPEG" or img.format == "PNG") and name not in self.org_images:
-
-                try:
-                    icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
-                    self.liststore.append([icon, os.path.basename(name)])
-                    self.org_images.append(name)
-                    self.optimize_button.set_sensitive(True)
-                except gi.repository.GLib.Error:
-                    print("{} is not an image so skipped.".format(name))
+                icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
+                self.liststore.append([icon, os.path.basename(name)])
+                self.org_images.append(name)
+                self.optimize_button.set_sensitive(True)
+            except gi.repository.GLib.Error:
+                print("{} is not an image so skipped.".format(name))
 
     def on_ui_iconview_item_activated(self, icon_view, path):
         self.liststore.remove(self.liststore.get_iter(path))
@@ -214,6 +204,7 @@ class MainWindow(object):
         filter_all.add_mime_type("image/png")
         filter_all.add_mime_type("image/jpg")
         filter_all.add_mime_type("image/jpeg")
+        filter_all.add_mime_type("image/webp")
 
         filter_png = Gtk.FileFilter()
         filter_png.set_name(_("PNG files"))
@@ -224,14 +215,22 @@ class MainWindow(object):
         filter_jpg.add_mime_type("image/jpg")
         filter_jpg.add_mime_type("image/jpeg")
 
+        filter_webp = Gtk.FileFilter()
+        filter_webp.set_name(_("WEBP files"))
+        filter_webp.add_mime_type("image/webp")
+
         file_chooser.add_filter(filter_all)
         file_chooser.add_filter(filter_png)
         file_chooser.add_filter(filter_jpg)
+        file_chooser.add_filter(filter_webp)
         file_chooser.set_filter(filter_all)
 
         response = file_chooser.run()
         if response == Gtk.ResponseType.ACCEPT:
-            self.image_to_ui(file_chooser.get_filenames())
+            filenames = file_chooser.get_filenames()
+            for image in filenames:
+                name = "{}".format(image)
+                self.image_to_ui_n_list(name)
         file_chooser.destroy()
 
         if self.dd_info_label.get_visible():
@@ -241,29 +240,6 @@ class MainWindow(object):
             self.main_stack.set_visible_child_name("select")
             self.settings_counter += 1
             self.settings_button_image.set_from_icon_name("preferences-system-symbolic", Gtk.IconSize.BUTTON)
-
-    def image_to_ui(self, filenames):
-        for image in filenames:
-            name = "{}".format(image)
-
-            try:
-                img = Image.open(name)
-            except IsADirectoryError:
-                print("{} is a directory, so skipping for now.".format(name))
-                continue
-            except Exception as e:
-                print("{}".format(e))
-                continue
-
-            if (img.format == "JPEG" or img.format == "PNG") and name not in self.org_images:
-                if name not in self.org_images:
-                    try:
-                        icon = GdkPixbuf.Pixbuf.new_from_file_at_size(name, 100, 100)
-                        self.liststore.append([icon, os.path.basename(name)])
-                        self.org_images.append(name)
-                        self.optimize_button.set_sensitive(True)
-                    except gi.repository.GLib.Error:
-                        print("{} is not an image so skipped".format(name))
 
     def control_output_directory(self):
         try:
@@ -411,29 +387,29 @@ class MainWindow(object):
                     self.png_images.append({"name": org_image, "size": self.get_size(org_image), "ext": ".png"})
                 elif Image.open(org_image).format == "JPEG":
                     self.jpg_images.append({"name": org_image, "size": self.get_size(org_image), "ext": ".jpg"})
+                elif Image.open(org_image).format == "WEBP":
+                    self.webp_images.append({"name": org_image, "size": self.get_size(org_image), "ext": ".webp"})
 
             self.p_queue = len(self.png_images)
             self.z_queue = self.p_queue
             self.jpg_queue = len(self.jpg_images)
+            self.webp_queue = len(self.webp_images)
 
             self.completed_jpg = 0
             self.completed_png = 0
+            self.completed_webp = 0
 
             self.main_stack.set_visible_child_name("splash")
             self.select_image.set_sensitive(False)
             self.settings_button.set_sensitive(False)
 
-            if self.jpg_images:
-                GLib.idle_add(self.jpg_progress_box.set_visible, True)
-            else:
-                GLib.idle_add(self.jpg_progress_box.set_visible, False)
-            if self.png_images:
-                GLib.idle_add(self.png_progress_box.set_visible, True)
-            else:
-                GLib.idle_add(self.png_progress_box.set_visible, False)
+            GLib.idle_add(self.jpg_progress_box.set_visible, self.jpg_images)
+            GLib.idle_add(self.png_progress_box.set_visible, self.png_images)
+            GLib.idle_add(self.webp_progress_box.set_visible, self.webp_images)
 
             GLib.idle_add(self.jpg_progress_label.set_markup, "<b>{} / {}</b> {}".format(self.completed_jpg, len(self.jpg_images), _("completed.")))
             GLib.idle_add(self.png_progress_label.set_markup, "<b>{} / {}</b> {}".format(self.completed_png, len(self.png_images), _("completed.")))
+            GLib.idle_add(self.webp_progress_label.set_markup, "<b>{} / {}</b> {}".format(self.completed_webp, len(self.webp_images), _("completed.")))
 
             for png_image in self.png_images:
 
@@ -465,6 +441,30 @@ class MainWindow(object):
                 self.jp.daemon = True
                 self.jp.start()
 
+            for webp_image in self.webp_images:
+
+                if self.UserSettings.config_output_method == 0:  # Save pictures to folder
+                    save_name = os.path.join(self.UserSettings.config_save_path,
+                                             os.path.basename(os.path.splitext(webp_image["name"])[0]) +
+                                             ("-" if self.UserSettings.config_ext_name != "" else "") +
+                                             self.UserSettings.config_ext_name + webp_image["ext"])
+                elif self.UserSettings.config_output_method == 1:  # Save each image in its own directory
+                    save_name = os.path.join(os.path.dirname(webp_image["name"]),
+                                             os.path.basename(os.path.splitext(webp_image["name"])[0]) + "-" +
+                                             (self.UserSettings.config_ext_name if self.UserSettings.config_ext_name != "" else self.UserSettings.default_ext_name)
+                                             + webp_image["ext"])
+                elif self.UserSettings.config_output_method == 2:  # Overwrite existing image
+                    save_name = webp_image["name"]
+                else:
+                    save_name = webp_image["name"]
+
+                if os.path.isfile(save_name):
+                    self.backup_image(save_name)
+
+                command = ["/usr/bin/cwebp", webp_image["name"], "-o", save_name]
+
+                self.start_webp_process(command)
+
     def optimize_jpg(self, jpg_image):
         foo = Image.open(jpg_image["name"])
         foo = foo.resize(foo.size, Image.Resampling.LANCZOS)
@@ -494,12 +494,13 @@ class MainWindow(object):
         GLib.idle_add(self.jpg_progress_label.set_markup,
                       "<b>{} / {}</b> {}".format(self.completed_jpg, len(self.jpg_images), _("completed.")))
 
-        if self.z_queue <= 0 and self.jpg_queue <= 0:
+        if self.jpg_queue <= 0:
+            self.add_to_done_listbox(self.jpg_images)
+
+        if self.jpg_queue <= 0 and self.z_queue <= 0 and self.webp_queue <= 0:
             GLib.idle_add(self.main_stack.set_visible_child_name, "complete")
             GLib.idle_add(self.settings_button.set_sensitive, True)
             self.notify()
-
-            self.add_to_done_listbox(self.jpg_images)
 
     def on_ui_done_listbox_row_activated(self, listbox, row):
         row.set_can_focus(False)
@@ -540,6 +541,9 @@ class MainWindow(object):
             for png_image in self.png_images:
                 if os.path.dirname(png_image["name"]) not in folders:
                     folders.append(os.path.dirname(png_image["name"]))
+            for webp_image in self.webp_images:
+                if os.path.dirname(webp_image["name"]) not in folders:
+                    folders.append(os.path.dirname(webp_image["name"]))
             try:
                 for folder in folders:
                     subprocess.check_call(["xdg-open", folder])
@@ -553,13 +557,17 @@ class MainWindow(object):
         self.optimize_button.set_sensitive(False)
         self.z_queue = 0
         self.p_queue = 0
+        self.webp_queue = 0
         self.org_images = []
         self.png_images = []
         self.jpg_images = []
+        self.webp_images = []
         self.completed_jpg = 0
         self.completed_png = 0
+        self.completed_webp = 0
         self.jpg_progress_label.set_text("")
         self.png_progress_label.set_text("")
+        self.webp_progress_label.set_text("")
         self.liststore.clear()
         for row in self.done_listbox:
             self.done_listbox.remove(row)
@@ -753,12 +761,50 @@ class MainWindow(object):
                       "<b>{} / {}</b> {}".format(self.completed_png, len(self.png_images), _("completed.")))
 
         if self.z_queue <= 0:
+
+            self.add_to_done_listbox(self.png_images)
+
             GLib.idle_add(self.main_stack.set_visible_child_name, "complete")
             GLib.idle_add(self.settings_button.set_sensitive, True)
             self.notify()
 
-            self.add_to_done_listbox(self.png_images)
-            self.add_to_done_listbox(self.jpg_images)
+
+    def start_webp_process(self, params):
+        pid, stdin, stdout, stderr = GLib.spawn_async(params, flags=GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+                                                      standard_output=True, standard_error=True)
+        GLib.io_add_watch(GLib.IOChannel(stdout), GLib.IO_IN | GLib.IO_HUP, self.on_webp_process_stdout)
+        GLib.io_add_watch(GLib.IOChannel(stderr), GLib.IO_IN | GLib.IO_HUP, self.on_webp_process_stderr)
+        GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid, self.on_webp_process_exit)
+
+        return pid
+
+    def on_webp_process_stdout(self, source, condition):
+        if condition == GLib.IO_HUP:
+            return False
+        line = source.readline()
+        print(line)
+        return True
+
+    def on_webp_process_stderr(self, source, condition):
+        if condition == GLib.IO_HUP:
+            return False
+        line = source.readline()
+        print(line)
+        return True
+
+    def on_webp_process_exit(self, pid, status):
+        self.webp_queue -= 1
+        self.completed_webp += 1
+        GLib.idle_add(self.webp_progress_label.set_markup,
+                      "<b>{} / {}</b> {}".format(self.completed_webp, len(self.webp_images), _("completed.")))
+
+        if self.webp_queue <= 0:
+            self.add_to_done_listbox(self.webp_images)
+
+        if self.webp_queue <= 0 and self.z_queue <= 0 and self.jpg_queue <= 0:
+            GLib.idle_add(self.main_stack.set_visible_child_name, "complete")
+            GLib.idle_add(self.settings_button.set_sensitive, True)
+            self.notify()
 
     def notify(self):
         if Notify.is_initted():
