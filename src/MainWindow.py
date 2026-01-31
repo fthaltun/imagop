@@ -467,7 +467,7 @@ class MainWindow(object):
 
     def optimize_jpg(self, jpg_image):
         foo = Image.open(jpg_image["name"])
-        foo = foo.resize(foo.size, Image.ANTIALIAS)
+        foo = foo.resize(foo.size, Image.Resampling.LANCZOS)
         if self.UserSettings.config_output_method == 0:  # Save pictures to folder
             save_name = os.path.join(self.UserSettings.config_save_path,
                                      os.path.basename(os.path.splitext(jpg_image["name"])[0]) +
